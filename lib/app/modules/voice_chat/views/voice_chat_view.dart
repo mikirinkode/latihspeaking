@@ -2,6 +2,9 @@ import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:voicechat/app/core/theme/app_color.dart';
+import 'package:voicechat/app/modules/voice_chat/widgets/chat_widget.dart';
 
 import '../controllers/voice_chat_controller.dart';
 
@@ -12,7 +15,6 @@ class VoiceChatView extends GetView<VoiceChatController> {
     return Obx(
       () => Scaffold(
         appBar: AppBar(
-          backgroundColor: Theme.of(context).primaryColor,
           centerTitle: true,
           title: Text(
               "Your Confidence: ${(controller.confidence * 100.0).toStringAsFixed(1)}%"),
@@ -33,85 +35,53 @@ class VoiceChatView extends GetView<VoiceChatController> {
               foregroundColor: Colors.white,
               child: Icon(controller.isListening ? Icons.stop : Icons.mic),
             )),
-        body: SingleChildScrollView(
-          reverse: true,
-          child: Container(
-            padding: const EdgeInsets.fromLTRB(30.0, 30.0, 30.0, 150.0),
-            child: Column(
-              children: [
-                Column(
-                  children: controller.messages.map((e) {
-                    var isUser = e.role == "user";
-                    return Padding(
-                      padding: EdgeInsets.only(
-                          top: 16,
-                          right: isUser ? 0 : 64,
-                          left: isUser ? 64 : 0),
-                      child: Align(
-                        alignment: isUser
-                            ? Alignment.centerRight
-                            : Alignment.centerLeft,
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: isUser
-                                  ? Color.fromARGB(255, 65, 33, 243)
-                                  : Color.fromARGB(255, 232, 234, 255)),
-                          padding: const EdgeInsets.all(16.0),
-                          child: Text(e.parts?.first.text ?? "",
-                              style: TextStyle(
-                                  color: isUser ? Colors.white : Colors.black,
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w400)),
-                        ),
+        body: controller.messages.isEmpty && !controller.isListening
+            ? Center(
+              child: Text(controller.text,
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.w400)),
+            )
+            : SingleChildScrollView(
+                reverse: true,
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(16.0, 0, 16, 150.0),
+                  child: Column(
+                    children: [
+                      Column(
+                        children: controller.messages.map((e) {
+                          var isUser = e.role == "user";
+                          return ChatWidget(
+                              message: e.parts?.first.text ?? "",
+                              isUser: isUser);
+                        }).toList(),
                       ),
-                    );
-                  }).toList(),
+                      controller.isListening
+                          ? ChatWidget(
+                              isUser: true,
+                              message: controller.text,
+                            )
+                          : Container(),
+                      controller.isGeneratingResponse
+                          ? Padding(
+                              padding:
+                                  EdgeInsets.only(top: 16, right: 64, left: 0),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(16),
+                                      color: AppColor.PRIMARY_100),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
+                                  child: LoadingAnimationWidget.waveDots(
+                                      color: AppColor.PRIMARY_500, size: 24),
+                                ),
+                              ),
+                            )
+                          : Container()
+                    ],
+                  ),
                 ),
-                controller.messages.isEmpty && !controller.isListening
-                    ? Text(controller.text,
-                        style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.w400))
-                    : Container(),
-                controller.isListening
-                    ? Padding(
-                        padding: EdgeInsets.only(top: 16, right: 0, left: 64),
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: Color.fromARGB(255, 65, 33, 243)),
-                            padding: const EdgeInsets.all(16.0),
-                            child: Text(controller.text,
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.w400)),
-                          ),
-                        ),
-                      )
-                    : Container(),
-                controller.isGeneratingResponse
-                    ? Padding(
-                        padding: EdgeInsets.only(top: 16, right: 64, left: 0),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: Color.fromARGB(255, 232, 234, 255)),
-                            padding: const EdgeInsets.all(16.0),
-                            child: Text(controller.response,
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.w400)),
-                          ),
-                        ),
-                      )
-                    : Container()
-              ],
-            ),
-          ),
-        ),
+              ),
       ),
     );
   }

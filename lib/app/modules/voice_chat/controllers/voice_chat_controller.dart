@@ -21,6 +21,7 @@ class VoiceChatController extends GetxController {
 
   final _messageId = 0.obs;
   final messages = <Content>[].obs;
+  final selectedVoice = "".obs;
 
   /// Object
   late SpeechToText _speech;
@@ -30,11 +31,16 @@ class VoiceChatController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-
+    selectedVoice(("Male"));
     _speech = SpeechToText();
     _gemini = Gemini.instance;
     _tts = FlutterTts();
-    _tts.setVoice({"name": "Google UK English Female", "locale": "en-GB"});
+
+    if (selectedVoice.value == "Male") {
+      _tts.setVoice({"name": "Google UK English Male", "locale": "en-GB"});
+    } else {
+      _tts.setVoice({"name": "Google UK English Female", "locale": "en-GB"});
+    }
     _tts.setErrorHandler((message) {
       print("onStatus: tts error: $message");
     });
