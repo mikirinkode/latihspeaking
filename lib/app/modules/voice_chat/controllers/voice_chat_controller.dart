@@ -2,7 +2,6 @@ import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get/get.dart';
 import 'package:speech_to_text/speech_to_text.dart';
-import 'package:voicechat/app/model/gemini_message.dart';
 
 class VoiceChatController extends GetxController {
   final _isListening = false.obs;
@@ -21,7 +20,7 @@ class VoiceChatController extends GetxController {
   double get confidence => _confidence.value;
 
   final _messageId = 0.obs;
-  final messages = [].obs;
+  final messages = <Content>[].obs;
 
   /// Object
   late SpeechToText _speech;
@@ -36,6 +35,9 @@ class VoiceChatController extends GetxController {
     _gemini = Gemini.instance;
     _tts = FlutterTts();
     _tts.setVoice({"name": "Google UK English Female", "locale": "en-GB"});
+    _tts.setErrorHandler((message) {
+      print("onStatus: tts error: $message");
+    });
   }
 
   @override
@@ -61,7 +63,6 @@ class VoiceChatController extends GetxController {
       if (available) {
         _text.value = "";
         _isListening.value = true;
-
         _speech.listen(
             onResult: (val) => {
                   _text.value = val.recognizedWords,
@@ -71,7 +72,8 @@ class VoiceChatController extends GetxController {
       }
     } else {
       _isListening.value = false;
-      messages.add(GeminiMessage(message: text, id: _messageId.value));
+      // messages.add(GeminiMessage(message: text, id: _messageId.value));
+      messages.add(Content(parts: [Parts(text: text)], role: "user"));
       _messageId.value = _messageId.value + 1;
       _speech.stop();
       _getGeminiResponse();
@@ -83,16 +85,19 @@ class VoiceChatController extends GetxController {
     try {
       _response.value = "";
       _isGeneratingResponse.value = true;
-      _gemini.streamGenerateContent(text).listen((value) {
-        // print("response: ${value.output}");
-        _response.value += value.output ?? "";
-      }).onDone(() {
-        print("onStatus: onGemini Done");
-        _text.value = "";
-        _isGeneratingResponse.value = false;
-        messages.add(GeminiMessage(message: response, id: _messageId.value));
-        _messageId.value = _messageId.value + 1;
-        _speak();
+      _gemini.chat(messages.value).then((value) {
+        if (value.isBlank != true) {
+          print("onStatus: onGemini Done");
+          _text.value = "";
+          _isGeneratingResponse.value = false;
+          var result =
+              value?.output ?? "Sorry we are having a problem right now.";
+          _response.value = _removeAsterisk(result);
+          messages.add(Content(parts: [Parts(text: response)], role: "model"));
+          _speak();
+        }
+      }).onError((error, stackTrace) {
+        print("onStatus: Error: $error");
       });
     } catch (e) {
       _isGeneratingResponse.value = false;
@@ -102,6 +107,12 @@ class VoiceChatController extends GetxController {
 
   void _speak() {
     print("onStatus: speaking");
-    _tts.speak(response);
+    _tts.speak(response).onError((error, stackTrace) {
+      print("onStatus: speaking error: $error");
+    });
+  }
+
+  String _removeAsterisk(String input) {
+    return input.replaceAll("*", '');
   }
 }

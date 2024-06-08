@@ -41,8 +41,7 @@ class VoiceChatView extends GetView<VoiceChatController> {
               children: [
                 Column(
                   children: controller.messages.map((e) {
-                    var id = (e.id ?? 0);
-                    var isUser = id % 2 == 0;
+                    var isUser = e.role == "user";
                     return Padding(
                       padding: EdgeInsets.only(
                           top: 16,
@@ -58,7 +57,7 @@ class VoiceChatView extends GetView<VoiceChatController> {
                                   ? Color.fromARGB(255, 65, 33, 243)
                                   : Color.fromARGB(255, 232, 234, 255)),
                           padding: const EdgeInsets.all(16.0),
-                          child: Text(e.message ?? "",
+                          child: Text(e.parts?.first.text ?? "",
                               style: TextStyle(
                                   color: isUser ? Colors.white : Colors.black,
                                   fontSize: 24,
