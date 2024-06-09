@@ -11,6 +11,7 @@ import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,28 +35,44 @@ class HomeView extends GetView<HomeController> {
                   ),
                   borderRadius: BorderRadius.circular(16)),
               padding: EdgeInsets.all(16),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
+              child: Column(
                 children: [
-                  Container(
-                      decoration: BoxDecoration(
-                        color: AppColor.PRIMARY_100,
-                      ),
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      child: Text(
-                        "Info",
-                        style: TextStyle(
-                            color: AppColor.PRIMARY_500,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold),
-                      )),
-                  SizedBox(
-                    width: 16,
+                  Text(
+                    "Welcome!",
+                    style: TextStyle(
+                        color: AppColor.PRIMARY_500,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold),
                   ),
-                  Flexible(
-                    child: Text(
-                        "Aplikasi ini bersifat eksperimental, sangat mungkin muncul masalah atau jawaban yang tidak akurat."),
-                  )
+                  SizedBox(
+                    height: 4,
+                  ),
+                  Text(
+                      "Disini kamu bisa coba latih speaking bahasa inggris, chatting santai atau tanya hal lainnya. Gratis!")
+                ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16)),
+              padding: EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Supported Language",
+                    style: TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  CustomChip(title: "English")
                 ],
               ),
             ),
@@ -72,7 +89,7 @@ class HomeView extends GetView<HomeController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Customize your Bot",
+                        "Customize your AI Buddy",
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold),
                       ),
@@ -86,11 +103,9 @@ class HomeView extends GetView<HomeController> {
                         height: 8,
                       ),
                       Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           mainAxisSize: MainAxisSize.max,
                           children: controller.voiceList
-                              .map((e) => Expanded(
-                                      child: VoiceCard(
+                              .map((e) => VoiceCard(
                                     name: e.name,
                                     locale: e.locale,
                                     isSelected: e.name ==
@@ -99,7 +114,7 @@ class HomeView extends GetView<HomeController> {
                                       controller
                                           .changeSelectedVoiceModel(e.name);
                                     },
-                                  )))
+                                  ))
                               .toList()),
                       const SizedBox(
                         height: 16,
@@ -110,11 +125,19 @@ class HomeView extends GetView<HomeController> {
                       const SizedBox(
                         height: 8,
                       ),
-                      VoiceCard(
-                          name: "Gemini AI",
-                          locale: "Google",
-                          isSelected: true,
-                          onCardTapped: () {}),
+                      Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: controller.aiList
+                              .map((e) => VoiceCard(
+                                    name: e.name,
+                                    locale: e.locale,
+                                    isSelected: e.name ==
+                                        controller.selectedAIModel.value,
+                                    onCardTapped: () {
+                                      controller.changeSelectedAIModel(e.name);
+                                    },
+                                  ))
+                              .toList()),
                       const SizedBox(
                         height: 16,
                       ),
@@ -124,12 +147,24 @@ class HomeView extends GetView<HomeController> {
                             text: "Play",
                             enabled: controller.selectedVoice.isNotEmpty,
                             onPressed: () {
-                              Get.toNamed(Routes.VOICE_CHAT, arguments: {
-                                "VOICE_MODEL":
-                                controller.selectedVoice.value
-                              });
+                              if (controller.selectedAIModel.value ==
+                                  "Gemini AI") {
+                                Get.toNamed(Routes.VOICE_CHAT, arguments: {
+                                  "VOICE_MODEL": controller.selectedVoice.value
+                                });
+                              } else {
+                                Get.toNamed(Routes.GROQCHAT, arguments: {
+                                  "VOICE_MODEL": controller.selectedVoice.value
+                                });
+                              }
                             }),
-                      )
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      Text(
+                          "*Aplikasi ini menggunakan alat bawaan device kamu untuk analisa suara, jdi ada kemungkinan muncul masalah atau jawaban yang tidak akurat.",
+                      style: TextStyle(color: AppColor.NEUTRAL_400, fontStyle: FontStyle.italic),)
                     ],
                   ),
                 ),
@@ -186,6 +221,7 @@ class VoiceCard extends StatelessWidget {
 
 class CustomChip extends StatelessWidget {
   final String title;
+
   const CustomChip({required this.title, super.key});
 
   @override
@@ -193,12 +229,12 @@ class CustomChip extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
           color: AppColor.PRIMARY_100, borderRadius: BorderRadius.circular(16)),
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.all(8),
       child: Text(
         title,
         style: const TextStyle(
             color: AppColor.PRIMARY_500,
-            fontSize: 16,
+            fontSize: 14,
             fontWeight: FontWeight.bold),
       ),
     );

@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 
+import '../modules/groqchat/bindings/groqchat_binding.dart';
+import '../modules/groqchat/views/groqchat_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/voice_chat/bindings/voice_chat_binding.dart';
@@ -22,6 +24,11 @@ class AppPages {
       name: _Paths.HOME,
       page: () => const HomeView(),
       binding: HomeBinding(),
+    ),
+    GetPage(
+      name: _Paths.GROQCHAT,
+      page: () => const GroqchatView(),
+      binding: GroqchatBinding(),
     ),
   ];
 }

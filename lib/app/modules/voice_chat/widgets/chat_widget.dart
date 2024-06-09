@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:voicechat/app/core/theme/app_color.dart';
 
 class ChatWidget extends StatelessWidget {
   final String message;
   final bool isUser;
+
   const ChatWidget({required this.message, required this.isUser, super.key});
 
   @override
@@ -15,18 +17,18 @@ class ChatWidget extends StatelessWidget {
       child: Align(
         alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-              color: isUser
-                  ? AppColor.PRIMARY_500
-                  : AppColor.PRIMARY_100),
-          padding: const EdgeInsets.all(8.0),
-          child: Text(message,
-              style: TextStyle(
-                  color: isUser ? Colors.white : Colors.black,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400)),
-        ),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: isUser ? AppColor.PRIMARY_500 : AppColor.PRIMARY_100),
+            padding: const EdgeInsets.all(8.0),
+            child: MarkdownBody(
+              data: message,
+              styleSheet: MarkdownStyleSheet(
+                  p: TextStyle(
+                      color: isUser ? Colors.white : Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400)),
+            )),
       ),
     );
   }
