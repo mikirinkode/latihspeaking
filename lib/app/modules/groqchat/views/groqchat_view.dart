@@ -10,14 +10,14 @@ import '../controllers/groqchat_controller.dart';
 
 class GroqchatView extends GetView<GroqchatController> {
   const GroqchatView({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Obx(
-          () => Scaffold(
+      () => Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: Text(
-              "Your Confidence: ${(controller.confidence * 100.0).toStringAsFixed(1)}%"),
+          title: Text("Llama3 x Groq"),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: AvatarGlow(
@@ -37,51 +37,60 @@ class GroqchatView extends GetView<GroqchatController> {
             )),
         body: controller.messages.isEmpty && !controller.isListening
             ? Center(
-          child: Text(controller.text,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w400)),
-        )
+                child: Text(controller.text,
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.w400),
+                    textAlign: TextAlign.center),
+              )
             : SingleChildScrollView(
-          reverse: true,
-          child: Container(
-            padding: const EdgeInsets.fromLTRB(16.0, 0, 16, 150.0),
-            child: Column(
-              children: [
-                Column(
-                  children: controller.messages.map((e) {
-                    var isUser = e.role == "user";
-                    return ChatWidget(
-                        message: e.content ?? "",
-                        isUser: isUser);
-                  }).toList(),
-                ),
-                controller.isListening
-                    ? ChatWidget(
-                  isUser: true,
-                  message: controller.text,
-                )
-                    : Container(),
-                controller.isGeneratingResponse
-                    ? Padding(
-                  padding:
-                  EdgeInsets.only(top: 16, right: 64, left: 0),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          color: AppColor.PRIMARY_100),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
-                      child: LoadingAnimationWidget.waveDots(
-                          color: AppColor.PRIMARY_500, size: 24),
-                    ),
+                reverse: true,
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(16.0, 0, 16, 150.0),
+                  child: Column(
+                    children: [
+                      Column(
+                        children:
+                            controller.messages.asMap().entries.map((entry) {
+                          var isUser = entry.value.role == "user";
+                          return ChatWidget(
+                            message: entry.value.content ?? "",
+                            isUser: isUser,
+                            translatedMessage: entry.value.translation ?? "",
+                            translate: () {
+                              controller.getTranslation(entry.value, entry.key);
+                            },
+                          );
+                        }).toList(),
+                      ),
+                      controller.isListening
+                          ? ChatWidget(
+                              isUser: true,
+                              message: controller.text,
+                              translatedMessage: "",
+                              translate: () {},
+                            )
+                          : Container(),
+                      controller.isGeneratingResponse
+                          ? Padding(
+                              padding:
+                                  EdgeInsets.only(top: 16, right: 64, left: 0),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(16),
+                                      color: AppColor.PRIMARY_100),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
+                                  child: LoadingAnimationWidget.waveDots(
+                                      color: AppColor.PRIMARY_500, size: 24),
+                                ),
+                              ),
+                            )
+                          : Container()
+                    ],
                   ),
-                )
-                    : Container()
-              ],
-            ),
-          ),
-        ),
+                ),
+              ),
       ),
     );
   }

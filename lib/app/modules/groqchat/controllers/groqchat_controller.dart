@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get/get.dart';
 import 'package:speech_to_text/speech_to_text.dart';
+import 'package:translator/translator.dart';
 import 'package:voicechat/app/model/groq_message.dart';
 
 import 'package:http/http.dart' as http;
@@ -31,19 +32,24 @@ class GroqchatController extends GetxController {
 
   double get confidence => _confidence.value;
 
-  final messages = <GroqMessage>[].obs;
+  final messages = <GroqMessage>[
+    GroqMessage("user", "good morning"),
+    GroqMessage("assistant", "hello there, good morning too"),
+  ].obs;
   final selectedVoice = "".obs;
 
   /// Object
   late SpeechToText _speech;
   late FlutterTts _tts;
+  late GoogleTranslator _translator;
 
   @override
   void onInit() {
     super.onInit();
-    selectedVoice(Get.arguments["VOICE_MODEL"]);
+    selectedVoice("Female");
     _speech = SpeechToText();
     _tts = FlutterTts();
+    _translator = GoogleTranslator();
 
     if (selectedVoice.value == "Male") {
       _tts.setVoice({"name": "Google UK English Male", "locale": "en-GB"});
@@ -63,6 +69,8 @@ class GroqchatController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+    _speech.stop();
+    _tts.stop();
   }
 
   startListening() async {
@@ -112,18 +120,31 @@ class GroqchatController extends GetxController {
       );
       if (apiResponse.statusCode == 200) {
         Get.log("onSuccess::response data: ${apiResponse.body}");
-        final groqResponse = GroqResponse.fromJson(jsonDecode(apiResponse.body));
+        final groqResponse =
+            GroqResponse.fromJson(jsonDecode(apiResponse.body));
         Get.log("groqResponse::${groqResponse.choices.first.message.content}");
 
         _text.value = "";
         _isGeneratingResponse.value = false;
         var result = groqResponse.choices.first.message.content;
         _response.value = result;
-        messages.add(GroqMessage("assistant", response));
+
+        // translate it first
+        // _translator
+        //     .translate(result, from: "en", to: "id")
+        //     .then((value) {
+        //   Get.log("translated message: ${value.text}");
+        //   messages.add(GroqMessage("assistant", response, translation: value.text));
+        // }).onError((error, stackTrace) {
+        //   Get.log("onError::translate message");
+          messages.add(GroqMessage("assistant", response));
+        // });
+
         _speak(TextUtils.removeAsterisk(response));
       } else {
         _isGeneratingResponse.value = false;
         Get.log("onError: $apiResponse");
+        Get.log("onError: ${apiResponse.body}");
       }
     } catch (e) {
       _isGeneratingResponse.value = false;
@@ -136,5 +157,30 @@ class GroqchatController extends GetxController {
     _tts.speak(input).onError((error, stackTrace) {
       Get.log("onStatus: speaking error: $error");
     });
+  }
+
+  void _getTranslation(GroqMessage groqMessage) {
+    _translator
+        .translate(groqMessage.content, from: "en", to: "id")
+        .then((value) {
+      Get.log("translated message: ${value.text}");
+      return value.text;
+    });
+  }
+
+  void getTranslation(GroqMessage groqMessage, int key) {
+    if (groqMessage.translation == null){
+      _translator
+          .translate(groqMessage.content, from: "en", to: "id")
+          .then((value) {
+        Get.log("translated message: ${value.text}");
+        GroqMessage updatedMessage = GroqMessage(
+            groqMessage.role, groqMessage.content,
+            translation: value.text);
+        messages[key] = updatedMessage;
+      });
+    } else {
+      Get.log("onGetTranslation info: there already translation");
+    }
   }
 }

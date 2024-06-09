@@ -10,14 +10,14 @@ import '../controllers/voice_chat_controller.dart';
 
 class VoiceChatView extends GetView<VoiceChatController> {
   const VoiceChatView({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Obx(
       () => Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: Text(
-              "Your Confidence: ${(controller.confidence * 100.0).toStringAsFixed(1)}%"),
+          title: Text("Gemini AI"),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: AvatarGlow(
@@ -37,9 +37,12 @@ class VoiceChatView extends GetView<VoiceChatController> {
             )),
         body: controller.messages.isEmpty && !controller.isListening
             ? Center(
-              child: Text(controller.text,
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.w400)),
-            )
+                child: Text(
+                  controller.text,
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.w400),
+                  textAlign: TextAlign.center,
+                ),
+              )
             : SingleChildScrollView(
                 reverse: true,
                 child: Container(
@@ -50,14 +53,19 @@ class VoiceChatView extends GetView<VoiceChatController> {
                         children: controller.messages.map((e) {
                           var isUser = e.role == "user";
                           return ChatWidget(
-                              message: e.parts?.first.text ?? "",
-                              isUser: isUser);
+                            message: e.parts?.first.text ?? "",
+                            isUser: isUser,
+                            translatedMessage: "", // TODO
+                            translate: () {},
+                          );
                         }).toList(),
                       ),
                       controller.isListening
                           ? ChatWidget(
                               isUser: true,
                               message: controller.text,
+                              translatedMessage: "",
+                              translate: () {},
                             )
                           : Container(),
                       controller.isGeneratingResponse

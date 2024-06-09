@@ -6,8 +6,15 @@ import 'package:voicechat/app/core/theme/app_color.dart';
 class ChatWidget extends StatelessWidget {
   final String message;
   final bool isUser;
+  final String translatedMessage;
+  final Function() translate;
 
-  const ChatWidget({required this.message, required this.isUser, super.key});
+  const ChatWidget(
+      {required this.message,
+      required this.isUser,
+      required this.translatedMessage,
+      required this.translate,
+      super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,13 +28,49 @@ class ChatWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16),
                 color: isUser ? AppColor.PRIMARY_500 : AppColor.PRIMARY_100),
             padding: const EdgeInsets.all(8.0),
-            child: MarkdownBody(
-              data: message,
-              styleSheet: MarkdownStyleSheet(
-                  p: TextStyle(
-                      color: isUser ? Colors.white : Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                MarkdownBody(
+                  data: message,
+                  styleSheet: MarkdownStyleSheet(
+                      p: TextStyle(
+                          color: isUser ? Colors.white : Colors.black,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400)),
+                ),
+                isUser
+                    ? const SizedBox()
+                    : Row(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          IconButton(
+                              onPressed: () {
+                                translate();
+                              },
+                              icon: const Icon(
+                                Icons.translate,
+                                size: 16,
+                              )),
+                          translatedMessage.isEmpty
+                              ? const SizedBox()
+                              : Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Flexible(
+                                    child: MarkdownBody(
+                                        data: translatedMessage,
+                                        styleSheet: MarkdownStyleSheet(
+                                          p: const TextStyle(
+                                            fontSize: 14,
+                                          ),
+                                        )),
+                                  ),
+                              )
+                        ],
+                      ),
+              ],
             )),
       ),
     );

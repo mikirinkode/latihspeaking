@@ -50,6 +50,7 @@ dependencies:
   loading_animation_widget: ^1.2.1
   http: ^1.2.1
   flutter_markdown: ^0.7.1
+  translator: ^1.0.0
 
 dev_dependencies:
   flutter_test:
