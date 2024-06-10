@@ -32,11 +32,10 @@ class GroqchatController extends GetxController {
 
   double get confidence => _confidence.value;
 
-  final messages = <GroqMessage>[
-    GroqMessage("user", "good morning"),
-    GroqMessage("assistant", "hello there, good morning too"),
-  ].obs;
+  final messages = <GroqMessage>[].obs;
   final selectedVoice = "".obs;
+
+  final pageTitle = "Llama3 x Groq".obs;
 
   /// Object
   late SpeechToText _speech;
@@ -46,7 +45,7 @@ class GroqchatController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    selectedVoice("Female");
+    selectedVoice(Get.arguments["VOICE_MODEL"]);
     _speech = SpeechToText();
     _tts = FlutterTts();
     _translator = GoogleTranslator();
@@ -59,6 +58,8 @@ class GroqchatController extends GetxController {
     _tts.setErrorHandler((message) {
       Get.log("onStatus: tts error: $message");
     });
+
+    _initializedAgent(Get.arguments["AI_AGENT"]);
   }
 
   @override
@@ -71,6 +72,31 @@ class GroqchatController extends GetxController {
     super.onClose();
     _speech.stop();
     _tts.stop();
+  }
+
+  void _initializedAgent(String agent) {
+    switch (agent) {
+      case Agent.englishMentor:
+        messages.addAll([
+          GroqMessage("system", SystemPromptTemplate.englishMentor),
+          GroqMessage("assistant",
+              "Hi, I am here to help you improve your english speaking skills! are you ready? SAY LET'S GO!")
+        ]);
+        pageTitle.value = Agent.englishMentor;
+      case Agent.techRecruiter:
+        messages.addAll([
+          GroqMessage("system", SystemPromptTemplate.techRecruiter),
+          GroqMessage("assistant",
+              "Hello, welcome to the Mock Interview. Are you ready to start practicing Interview?")
+        ]);
+        pageTitle.value = Agent.techRecruiter;
+      default:
+        messages.addAll([
+          GroqMessage("system", SystemPromptTemplate.aiAssistant),
+          GroqMessage("assistant", "Hello there, how can i help you today?")
+        ]);
+        pageTitle.value = Agent.aiAssistant;
+    }
   }
 
   startListening() async {
@@ -137,7 +163,7 @@ class GroqchatController extends GetxController {
         //   messages.add(GroqMessage("assistant", response, translation: value.text));
         // }).onError((error, stackTrace) {
         //   Get.log("onError::translate message");
-          messages.add(GroqMessage("assistant", response));
+        messages.add(GroqMessage("assistant", response));
         // });
 
         _speak(TextUtils.removeAsterisk(response));
@@ -169,7 +195,7 @@ class GroqchatController extends GetxController {
   }
 
   void getTranslation(GroqMessage groqMessage, int key) {
-    if (groqMessage.translation == null){
+    if (groqMessage.translation == null) {
       _translator
           .translate(groqMessage.content, from: "en", to: "id")
           .then((value) {

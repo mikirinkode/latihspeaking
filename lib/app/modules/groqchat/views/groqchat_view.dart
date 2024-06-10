@@ -17,7 +17,7 @@ class GroqchatView extends GetView<GroqchatController> {
       () => Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: Text("Llama3 x Groq"),
+          title: Text(controller.pageTitle.value),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: AvatarGlow(
@@ -53,7 +53,7 @@ class GroqchatView extends GetView<GroqchatController> {
                           var isUser = entry.value.role == "user";
                           return ChatWidget(
                             message: entry.value.content ?? "",
-                            isUser: isUser,
+                            role: entry.value.role,
                             translatedMessage: entry.value.translation ?? "",
                             translate: () {
                               controller.getTranslation(entry.value, entry.key);
@@ -63,7 +63,7 @@ class GroqchatView extends GetView<GroqchatController> {
                       ),
                       controller.isListening
                           ? ChatWidget(
-                              isUser: true,
+                        role: "user",
                               message: controller.text,
                               translatedMessage: "",
                               translate: () {},

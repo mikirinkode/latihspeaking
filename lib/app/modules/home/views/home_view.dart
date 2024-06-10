@@ -58,16 +58,14 @@ class HomeView extends GetView<HomeController> {
             child: Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16)),
+                  color: Colors.white, borderRadius: BorderRadius.circular(16)),
               padding: EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     "Supported Language",
-                    style: TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(
                     height: 8,
@@ -126,6 +124,7 @@ class HomeView extends GetView<HomeController> {
                         height: 8,
                       ),
                       Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.max,
                           children: controller.aiList
                               .map((e) => VoiceCard(
@@ -135,6 +134,29 @@ class HomeView extends GetView<HomeController> {
                                         controller.selectedAIModel.value,
                                     onCardTapped: () {
                                       controller.changeSelectedAIModel(e.name);
+                                    },
+                                  ))
+                              .toList()),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      const Text(
+                        "AI act as",
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.max,
+                          children: controller.agentList
+                              .map((e) => VoiceCard(
+                                    name: e.name,
+                                    locale: e.locale,
+                                    isSelected: e.name ==
+                                        controller.selectedAgent.value,
+                                    onCardTapped: () {
+                                      controller.changeSelectedAgent(e.name);
                                     },
                                   ))
                               .toList()),
@@ -154,7 +176,8 @@ class HomeView extends GetView<HomeController> {
                                 });
                               } else {
                                 Get.toNamed(Routes.GROQCHAT, arguments: {
-                                  "VOICE_MODEL": controller.selectedVoice.value
+                                  "VOICE_MODEL": controller.selectedVoice.value,
+                                  "AI_AGENT": controller.selectedAgent.value
                                 });
                               }
                             }),
@@ -163,8 +186,11 @@ class HomeView extends GetView<HomeController> {
                         height: 8,
                       ),
                       Text(
-                          "*Aplikasi ini menggunakan alat bawaan device kamu untuk analisa suara, jdi ada kemungkinan muncul masalah atau jawaban yang tidak akurat.",
-                      style: TextStyle(color: AppColor.NEUTRAL_400, fontStyle: FontStyle.italic),)
+                        "*Aplikasi ini menggunakan alat bawaan device kamu untuk analisa suara, jdi ada kemungkinan muncul masalah atau jawaban yang tidak akurat.",
+                        style: TextStyle(
+                            color: AppColor.NEUTRAL_400,
+                            fontStyle: FontStyle.italic),
+                      )
                     ],
                   ),
                 ),
@@ -190,28 +216,31 @@ class VoiceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onCardTapped,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Container(
-          decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(
-                  width: 2,
-                  color:
-                      isSelected ? AppColor.PRIMARY_500 : AppColor.NEUTRAL_200),
-              borderRadius: BorderRadius.circular(16)),
-          padding: EdgeInsets.all(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                name,
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              Text(locale)
-            ],
+    return Flexible(
+      child: GestureDetector(
+        onTap: onCardTapped,
+        child: Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: Container(
+            decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(
+                    width: 2,
+                    color: isSelected
+                        ? AppColor.PRIMARY_500
+                        : AppColor.NEUTRAL_200),
+                borderRadius: BorderRadius.circular(16)),
+            padding: EdgeInsets.all(8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                (locale.isEmpty) ? const SizedBox() : Text(locale)
+              ],
+            ),
           ),
         ),
       ),

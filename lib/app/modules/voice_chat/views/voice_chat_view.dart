@@ -51,10 +51,9 @@ class VoiceChatView extends GetView<VoiceChatController> {
                     children: [
                       Column(
                         children: controller.messages.map((e) {
-                          var isUser = e.role == "user";
                           return ChatWidget(
                             message: e.parts?.first.text ?? "",
-                            isUser: isUser,
+                            role: e.role ?? "user",
                             translatedMessage: "", // TODO
                             translate: () {},
                           );
@@ -62,7 +61,7 @@ class VoiceChatView extends GetView<VoiceChatController> {
                       ),
                       controller.isListening
                           ? ChatWidget(
-                              isUser: true,
+                        role: "user",
                               message: controller.text,
                               translatedMessage: "",
                               translate: () {},

@@ -18,16 +18,23 @@ class VoiceModel {
       ];
 
   static List<VoiceModel> getAIModelList() => [
-    VoiceModel(name: "Gemini AI", locale: "by Google"),
+    // VoiceModel(name: "Gemini AI", locale: "by Google"),
     VoiceModel(name: "Llama3", locale: "by Meta (running on Groq)"),
+  ];
+  static List<VoiceModel> getAgentList() => [
+    VoiceModel(name: Agent.aiAssistant, locale: ""),
+    VoiceModel(name: Agent.englishMentor, locale: ""),
+    VoiceModel(name: Agent.techRecruiter, locale: ""),
   ];
 }
 
 class HomeController extends GetxController {
   final voiceList = VoiceModel.getVoiceList();
   final aiList = VoiceModel.getAIModelList();
+  final agentList = VoiceModel.getAgentList();
   final selectedVoice = "Female".obs;
-  final selectedAIModel = "Gemini AI".obs;
+  final selectedAIModel = "Llama3".obs;
+  final selectedAgent = Agent.aiAssistant.obs;
 
   @override
   void onInit() {
@@ -115,5 +122,9 @@ class HomeController extends GetxController {
 
   void changeSelectedAIModel(String name) {
     selectedAIModel.value = name;
+  }
+
+  void changeSelectedAgent(String name) {
+    selectedAgent.value = name;
   }
 }
