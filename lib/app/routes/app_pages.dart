@@ -1,5 +1,10 @@
 import 'package:get/get.dart';
 
+import 'package:voicechat/app/modules/learning/bindings/learning_binding.dart';
+import 'package:voicechat/app/modules/learning/views/learning_view.dart';
+import 'package:voicechat/app/modules/self_assessment/bindings/self_assessment_binding.dart';
+import 'package:voicechat/app/modules/self_assessment/views/self_assessment_view.dart';
+
 import '../modules/groqchat/bindings/groqchat_binding.dart';
 import '../modules/groqchat/views/groqchat_view.dart';
 import '../modules/home/bindings/home_binding.dart';
@@ -29,6 +34,16 @@ class AppPages {
       name: _Paths.GROQCHAT,
       page: () => const GroqchatView(),
       binding: GroqchatBinding(),
+    ),
+    GetPage(
+      name: _Paths.LEARNING,
+      page: () => LearningView(),
+      binding: LearningBinding(),
+    ),
+    GetPage(
+      name: _Paths.SELF_ASSESSMENT,
+      page: () => SelfAssessmentView(),
+      binding: SelfAssessmentBinding(),
     ),
   ];
 }

@@ -77,25 +77,62 @@ class GroqchatController extends GetxController {
   void _initializedAgent(String agent) {
     switch (agent) {
       case Agent.englishMentor:
+        pageTitle.value = Agent.englishMentor;
         messages.addAll([
           GroqMessage("system", SystemPromptTemplate.englishMentor),
           GroqMessage("assistant",
               "Hi, I am here to help you improve your english speaking skills! are you ready? SAY LET'S GO!")
         ]);
-        pageTitle.value = Agent.englishMentor;
+        break;
       case Agent.techRecruiter:
+        pageTitle.value = Agent.techRecruiter;
         messages.addAll([
           GroqMessage("system", SystemPromptTemplate.techRecruiter),
           GroqMessage("assistant",
               "Hello, welcome to the Mock Interview. Are you ready to start practicing Interview?")
         ]);
-        pageTitle.value = Agent.techRecruiter;
+        break;
+      case Agent.repeatAfterMeAgent:
+        pageTitle.value = Agent.repeatAfterMeAgent;
+        messages.addAll([
+          GroqMessage("system", SystemPromptTemplate.repeatAfterMeAgent),
+          GroqMessage("assistant",
+              "Hello, I'm here to help you improve your intonation and pronunciation. Ready to start repeating after me?")
+        ]);
+        break;
+      case Agent.pronunciationPracticeAgent:
+        pageTitle.value = Agent.pronunciationPracticeAgent;
+        messages.addAll([
+          GroqMessage(
+              "system", SystemPromptTemplate.pronunciationPracticeAgent),
+          GroqMessage("assistant",
+              "Hi there! Let's focus on improving your pronunciation, especially on tricky words. Are you ready to get started?")
+        ]);
+        break;
+      case Agent.conversationalPracticeAgent:
+        pageTitle.value = Agent.conversationalPracticeAgent;
+        messages.addAll([
+          GroqMessage(
+              "system", SystemPromptTemplate.conversationalPracticeAgent),
+          GroqMessage("assistant",
+              "Hey, I'm here to help you practice your conversational skills! Ready to have some fun conversations?")
+        ]);
+        break;
+      case Agent.casualChatAgent:
+        pageTitle.value = Agent.casualChatAgent;
+        messages.addAll([
+          GroqMessage("system", SystemPromptTemplate.casualChatAgent),
+          GroqMessage("assistant",
+              "Hey there! I'm here for some casual chatting. Ready to have a relaxed conversation?")
+        ]);
+        break;
+
       default:
+        pageTitle.value = Agent.aiAssistant;
         messages.addAll([
           GroqMessage("system", SystemPromptTemplate.aiAssistant),
           GroqMessage("assistant", "Hello there, how can i help you today?")
         ]);
-        pageTitle.value = Agent.aiAssistant;
     }
   }
 
