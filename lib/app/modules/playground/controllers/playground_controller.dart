@@ -8,8 +8,8 @@ import 'package:translator/translator.dart';
 
 import 'package:http/http.dart' as http;
 import '../../../../constants.dart';
-import '../../../model/groq_message.dart';
-import '../../../model/groq_response.dart';
+import '../../../data/model/groq_message.dart';
+import '../../../data/model/groq_response.dart';
 import '../../../utils/text_utils.dart';
 
 

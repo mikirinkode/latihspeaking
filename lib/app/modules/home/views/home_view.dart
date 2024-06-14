@@ -25,10 +25,10 @@ class HomeView extends GetView<HomeController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                "Latihan",
-                style: TextStyle(fontSize: 18),
-              ),
+              // const Text(
+              //   "Latihan",
+              //   style: TextStyle(fontSize: 18),
+              // ),
               PracticeCard(
                 icon: "🔁",
                 title: "Repeat after me",
@@ -76,40 +76,40 @@ class HomeView extends GetView<HomeController> {
                   });
                 },
               ),
-              const SizedBox(
-                height: 24,
-              ),
-              const Text(
-                "Profil",
-                style: TextStyle(fontSize: 18),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 16, right: 8, left: 8),
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16)),
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Status",
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                      CustomChip(title: "Beginner"),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                      PrimaryButton(text: "Test Ulang", onPressed: () {})
-                    ],
-                  ),
-                ),
-              )
+              // const SizedBox(
+              //   height: 24,
+              // ),
+              // const Text(
+              //   "Profil",
+              //   style: TextStyle(fontSize: 18),
+              // ),
+              // Padding(
+              //   padding: const EdgeInsets.only(top: 16, right: 8, left: 8),
+              //   child: Container(
+              //     width: double.infinity,
+              //     decoration: BoxDecoration(
+              //         color: Colors.white,
+              //         borderRadius: BorderRadius.circular(16)),
+              //     padding: const EdgeInsets.all(12),
+              //     child: Column(
+              //       crossAxisAlignment: CrossAxisAlignment.start,
+              //       children: [
+              //         Text(
+              //           "Status",
+              //           style: const TextStyle(fontWeight: FontWeight.bold),
+              //         ),
+              //         const SizedBox(
+              //           height: 8,
+              //         ),
+              //         CustomChip(title: "Beginner"),
+              //         const SizedBox(
+              //           height: 8,
+              //         ),
+              //         PrimaryButton(text: "Test Ulang", onPressed: () {})
+              //       ],
+              //     ),
+              //   ),
+              // )
             ],
           ),
         ),
