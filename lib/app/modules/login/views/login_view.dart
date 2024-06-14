@@ -21,17 +21,18 @@ class LoginView extends GetView<LoginController> {
           padding: const EdgeInsets.all(24.0),
           child: Column(
             children: [
-              Expanded(
+              const Expanded(
                 child: Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text(
+                      Text(
                         'Yuk latih Speakingmu!',
                         style: TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.w700,
                         ),
+                        textAlign: TextAlign.center,
                       ),
                       // SizedBox(
                       //   width: double.infinity,

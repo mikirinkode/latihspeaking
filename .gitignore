@@ -47,3 +47,5 @@ app.*.map.json
 
 constants.dart
 google-services.json
+
+android/key.jks

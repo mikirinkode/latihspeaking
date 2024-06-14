@@ -7,7 +7,6 @@ import '../../../global_widgets/button_widget.dart';
 import '../../../routes/app_pages.dart';
 import '../controllers/proficiency_controller.dart';
 
-
 class ProficiencyView extends GetView<ProficiencyController> {
   @override
   Widget build(BuildContext context) {
@@ -23,7 +22,7 @@ class ProficiencyView extends GetView<ProficiencyController> {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Obx(
-                () => Column(
+            () => Column(
               children: [
                 Container(
                   width: double.infinity,
@@ -43,7 +42,7 @@ class ProficiencyView extends GetView<ProficiencyController> {
                               isSelected: e.title ==
                                   controller.selectedProficiency.value,
                               onCardTapped: () {
-                                controller.changeSelectedProficiency(e.title);
+                                controller.changeSelectedProficiency(e.title, e.value);
                               })),
                     ],
                   ),
@@ -57,7 +56,7 @@ class ProficiencyView extends GetView<ProficiencyController> {
                         text: "Lanjut",
                         enabled: controller.selectedProficiency.isNotEmpty,
                         onPressed: () {
-                          Get.toNamed(Routes.HOME);
+                          controller.updateProficiency();
                         }))
               ],
             ),
@@ -76,10 +75,10 @@ class SelectableCard extends StatelessWidget {
 
   const SelectableCard(
       {required this.title,
-        required this.desc,
-        required this.isSelected,
-        required this.onCardTapped,
-        super.key});
+      required this.desc,
+      required this.isSelected,
+      required this.onCardTapped,
+      super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -88,22 +87,28 @@ class SelectableCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.only(top: 16, right: 4, left: 4),
         child: Container(
+          width: double.infinity,
           decoration: BoxDecoration(
               color: Colors.white,
               border: Border.all(
                   width: 2,
                   color:
-                  isSelected ? AppColor.PRIMARY_500 : AppColor.NEUTRAL_200),
+                      isSelected ? AppColor.PRIMARY_500 : AppColor.NEUTRAL_200),
               borderRadius: BorderRadius.circular(16)),
-          padding: EdgeInsets.all(8),
+          padding: const EdgeInsets.all(12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 title,
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
-              (desc.isEmpty) ? const SizedBox() : Text(desc)
+              (isSelected)
+                  ? Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(desc),
+                    )
+                  : const SizedBox()
             ],
           ),
         ),

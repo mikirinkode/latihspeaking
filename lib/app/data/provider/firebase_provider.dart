@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../model/user_model.dart';
+
 class FirebaseProvider extends GetxService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -12,6 +14,13 @@ class FirebaseProvider extends GetxService {
     return this;
   }
 
+  late final _userRef = _firestore.collection("users").withConverter(
+      fromFirestore: UserModel.fromFirestore,
+      toFirestore: (UserModel user, options) => user.toFirestore());
+
+  User? getCurrentUser() {
+    return _auth.currentUser;
+  }
 
   Future<bool> signInWithGoogle() async {
     try {
@@ -22,7 +31,7 @@ class FirebaseProvider extends GetxService {
         GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
         final GoogleSignInAuthentication? googleAuth =
-        await googleUser?.authentication;
+            await googleUser?.authentication;
 
         final credential = GoogleAuthProvider.credential(
           accessToken: googleAuth?.accessToken,
@@ -50,7 +59,40 @@ class FirebaseProvider extends GetxService {
     }
   }
 
-  User? getCurrentUser() {
-    return _auth.currentUser;
+  Future<void> checkUserData() async {
+    try {
+      var userId = _auth.currentUser?.uid;
+      var userData = await _userRef.doc(userId).get();
+
+      if (!userData.exists) {
+        await _userRef.doc(userId).set(UserModel(
+              userId: userId!,
+              name: _auth.currentUser?.displayName ?? "",
+              email: _auth.currentUser?.email ?? "",
+              avatarUrl: _auth.currentUser?.photoURL ?? "",
+              createAt: DateTime.now().toUtc().millisecondsSinceEpoch,
+              updatedAt: DateTime.now().toUtc().millisecondsSinceEpoch,
+            ));
+      } else {
+        Get.log("User data is exist");
+      }
+    } catch (error) {
+      Get.log("Error: $error");
+      rethrow;
+    }
+  }
+
+  Future<bool> updateProficiency(String proficiency) async {
+    try {
+      var userId = _auth.currentUser?.uid;
+
+      var data = <String, String>{"proficiency": proficiency};
+
+      await _userRef.doc(userId).update(data);
+      return true;
+    } catch (error) {
+      Get.log("Error: $error");
+      return false;
+    }
   }
 }

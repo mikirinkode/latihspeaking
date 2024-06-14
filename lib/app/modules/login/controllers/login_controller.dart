@@ -23,7 +23,7 @@ class LoginController extends GetxController {
     try {
       bool success = await Get.find<FirebaseProvider>().signInWithGoogle();
       if (success) {
-        // await Get.find<FirebaseProvider>().checkUserData();
+        await Get.find<FirebaseProvider>().checkUserData();
         Get.find<AuthService>().refreshUser();
         Get.offAllNamed(Routes.PROFICIENCY);
       } else {
@@ -36,7 +36,7 @@ class LoginController extends GetxController {
     Get.find<FirebaseProvider>().signInWithGoogle().then((value) {
       // UI.showSnackbar(message: "Login Berhasil");
       if (value) {
-        // Get.find<FirebaseProvider>().checkUserData();
+        Get.find<FirebaseProvider>().checkUserData();
         Get.find<AuthService>().refreshUser();
         Get.offAllNamed(Routes.PROFICIENCY);
       } else {
