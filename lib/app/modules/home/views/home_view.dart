@@ -17,7 +17,7 @@ class HomeView extends GetView<HomeController> {
     return Scaffold(
       appBar: AppBar(
         // backgroundColor: AppColor.PRIMARY_500,
-        title: const Text('VoiceChat App'),
+        title: const Text('Latih Speaking'),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
