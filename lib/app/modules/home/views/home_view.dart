@@ -1,246 +1,182 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 import 'package:get/get.dart';
-import 'package:voicechat/app/core/theme/app_color.dart';
-import 'package:voicechat/app/global_widgets/button_widget.dart';
-import 'package:voicechat/app/routes/app_pages.dart';
 
+import '../../../../constants.dart';
+import '../../../core/theme/app_color.dart';
+import '../../../global_widgets/button_widget.dart';
+import '../../../routes/app_pages.dart';
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
-  const HomeView({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // backgroundColor: AppColor.PRIMARY_500,
-        title: const Text('Latih Speaking'),
+        title: const Text('Yuk latihan speaking! 🔥'),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(
+          parent: BouncingScrollPhysics(),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
           child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Container(
-              decoration: BoxDecoration(
-                  color: AppColor.PRIMARY_100,
-                  border: Border.all(
-                    width: 2,
-                    color: AppColor.PRIMARY_500,
-                  ),
-                  borderRadius: BorderRadius.circular(16)),
-              padding: EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  Text(
-                    "Welcome!",
-                    style: TextStyle(
-                        color: AppColor.PRIMARY_500,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(
-                    height: 4,
-                  ),
-                  Text(
-                      "Disini kamu bisa coba latih speaking bahasa inggris, chatting santai atau tanya hal lainnya. Gratis!")
-                ],
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Latihan",
+                style: TextStyle(fontSize: 18),
               ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(16)),
-              padding: EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Supported Language",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  CustomChip(title: "English")
-                ],
+              PracticeCard(
+                icon: "🔁",
+                title: "Repeat after me",
+                desc:
+                "AI Buddy akan mengucapkan sebuah kalimat. Kamu bisa mengulanginya untuk melatih intonasi dan pelafalan.",
+                onTap: () {
+                  Get.toNamed(Routes.PLAYGROUND, arguments: {
+                    "VOICE_MODEL": "Female",
+                    "AI_AGENT": Agent.repeatAfterMeAgent
+                  });
+                },
               ),
-            ),
-          ),
-          Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Obx(
-                () => Container(
+              PracticeCard(
+                icon: "🔊",
+                title: "Pronunciation Practice",
+                desc: "Fokus berlatih ke kata kata yang tricky",
+                onTap: () {
+                  Get.toNamed(Routes.PLAYGROUND, arguments: {
+                    "VOICE_MODEL": "Female",
+                    "AI_AGENT": Agent.pronunciationPracticeAgent
+                  });
+                },
+              ),
+              PracticeCard(
+                icon: "💬",
+                title: "Conversational Practice",
+                desc:
+                "Simulasi ngobrol dengan tema seperti pergi nonton ke bioskop atau ke restoran",
+                onTap: () {
+                  Get.toNamed(Routes.PLAYGROUND, arguments: {
+                    "VOICE_MODEL": "Female",
+                    "AI_AGENT": Agent.conversationalPracticeAgent
+                  });
+                },
+              ),
+              PracticeCard(
+                icon: "👤",
+                title: "Free talk",
+                desc:
+                "Ngobrol sesuka kamu, ekspresikan diri dan latih speaking mu!",
+                onTap: () {
+                  Get.toNamed(Routes.PLAYGROUND, arguments: {
+                    "VOICE_MODEL": "Female",
+                    "AI_AGENT": Agent.casualChatAgent
+                  });
+                },
+              ),
+              const SizedBox(
+                height: 24,
+              ),
+              const Text(
+                "Profil",
+                style: TextStyle(fontSize: 18),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 16, right: 8, left: 8),
+                child: Container(
+                  width: double.infinity,
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(16)),
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(12),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Customize your AI Buddy",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      const Text(
-                        "Voice Model",
+                        "Status",
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(
                         height: 8,
                       ),
-                      Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: controller.voiceList
-                              .map((e) => VoiceCard(
-                                    name: e.name,
-                                    locale: e.locale,
-                                    isSelected: e.name ==
-                                        controller.selectedVoice.value,
-                                    onCardTapped: () {
-                                      controller
-                                          .changeSelectedVoiceModel(e.name);
-                                    },
-                                  ))
-                              .toList()),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      const Text(
-                        "AI Model",
-                      ),
+                      CustomChip(title: "Beginner"),
                       const SizedBox(
                         height: 8,
                       ),
-                      Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.max,
-                          children: controller.aiList
-                              .map((e) => VoiceCard(
-                                    name: e.name,
-                                    locale: e.locale,
-                                    isSelected: e.name ==
-                                        controller.selectedAIModel.value,
-                                    onCardTapped: () {
-                                      controller.changeSelectedAIModel(e.name);
-                                    },
-                                  ))
-                              .toList()),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      const Text(
-                        "AI act as",
-                      ),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                      Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.max,
-                          children: controller.agentList
-                              .map((e) => VoiceCard(
-                                    name: e.name,
-                                    locale: e.locale,
-                                    isSelected: e.name ==
-                                        controller.selectedAgent.value,
-                                    onCardTapped: () {
-                                      controller.changeSelectedAgent(e.name);
-                                    },
-                                  ))
-                              .toList()),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      SizedBox(
-                        width: double.infinity,
-                        child: PrimaryButton(
-                            text: "Play",
-                            enabled: controller.selectedVoice.isNotEmpty,
-                            onPressed: () {
-                              if (controller.selectedAIModel.value ==
-                                  "Gemini AI") {
-                                Get.toNamed(Routes.VOICE_CHAT, arguments: {
-                                  "VOICE_MODEL": controller.selectedVoice.value
-                                });
-                              } else {
-                                Get.toNamed(Routes.GROQCHAT, arguments: {
-                                  "VOICE_MODEL": controller.selectedVoice.value,
-                                  "AI_AGENT": controller.selectedAgent.value
-                                });
-                              }
-                            }),
-                      ),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                      Text(
-                        "*Aplikasi ini menggunakan alat bawaan device kamu untuk analisa suara, jdi ada kemungkinan muncul masalah atau jawaban yang tidak akurat.",
-                        style: TextStyle(
-                            color: AppColor.NEUTRAL_400,
-                            fontStyle: FontStyle.italic),
-                      )
+                      PrimaryButton(text: "Test Ulang", onPressed: () {})
                     ],
                   ),
                 ),
-              )),
-        ],
-      )),
+              )
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
 
-class VoiceCard extends StatelessWidget {
-  final String name;
-  final String locale;
-  final bool isSelected;
-  final Function() onCardTapped;
+class PracticeCard extends StatelessWidget {
+  final icon;
+  final title;
+  final desc;
+  final Function() onTap;
 
-  const VoiceCard(
-      {required this.name,
-      required this.locale,
-      required this.isSelected,
-      required this.onCardTapped,
-      super.key});
+  const PracticeCard(
+      {required this.icon,
+        required this.title,
+        required this.desc,
+        required this.onTap,
+        super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Flexible(
-      child: GestureDetector(
-        onTap: onCardTapped,
-        child: Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: Container(
-            decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(
-                    width: 2,
-                    color: isSelected
-                        ? AppColor.PRIMARY_500
-                        : AppColor.NEUTRAL_200),
-                borderRadius: BorderRadius.circular(16)),
-            padding: EdgeInsets.all(8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  style: TextStyle(fontWeight: FontWeight.bold),
+    return GestureDetector(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 16, right: 8, left: 8),
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+              color: Colors.white, borderRadius: BorderRadius.circular(16)),
+          padding: const EdgeInsets.all(8),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                  decoration: const BoxDecoration(
+                      color: AppColor.PRIMARY_100, shape: BoxShape.circle),
+                  padding: const EdgeInsets.all(12),
+                  child: Text(icon)),
+              const SizedBox(
+                width: 8,
+              ),
+              Flexible(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(desc)
+                        ],
+                      ),
+                    ),
+                    const Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      color: AppColor.NEUTRAL_700,
+                      size: 16,
+                    )
+                  ],
                 ),
-                (locale.isEmpty) ? const SizedBox() : Text(locale)
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

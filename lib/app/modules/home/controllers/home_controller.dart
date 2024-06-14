@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:voicechat/constants.dart';
+import 'package:speaking/constants.dart';
 
 import '../../../model/groq_response.dart';
 

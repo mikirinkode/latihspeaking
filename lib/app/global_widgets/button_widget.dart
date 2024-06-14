@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:voicechat/app/core/theme/app_color.dart';
+import 'package:speaking/app/core/theme/app_color.dart';
 
 class PrimaryButton extends StatelessWidget {
   final String text;

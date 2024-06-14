@@ -4,14 +4,16 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get/get.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:translator/translator.dart';
-import 'package:voicechat/app/model/groq_message.dart';
+
 
 import 'package:http/http.dart' as http;
 import '../../../../constants.dart';
+import '../../../model/groq_message.dart';
 import '../../../model/groq_response.dart';
 import '../../../utils/text_utils.dart';
 
-class GroqchatController extends GetxController {
+
+class PlaygroundController extends GetxController {
   final _isListening = false.obs;
 
   bool get isListening => _isListening.value;
@@ -148,10 +150,10 @@ class GroqchatController extends GetxController {
         _isListening.value = true;
         _speech.listen(
             onResult: (val) => {
-                  _text.value = val.recognizedWords,
-                  if (val.hasConfidenceRating && val.confidence > 0)
-                    {_confidence.value = val.confidence}
-                });
+              _text.value = val.recognizedWords,
+              if (val.hasConfidenceRating && val.confidence > 0)
+                {_confidence.value = val.confidence}
+            });
       }
     } else {
       _isListening.value = false;
@@ -184,7 +186,7 @@ class GroqchatController extends GetxController {
       if (apiResponse.statusCode == 200) {
         Get.log("onSuccess::response data: ${apiResponse.body}");
         final groqResponse =
-            GroqResponse.fromJson(jsonDecode(apiResponse.body));
+        GroqResponse.fromJson(jsonDecode(apiResponse.body));
         Get.log("groqResponse::${groqResponse.choices.first.message.content}");
 
         _text.value = "";
@@ -247,3 +249,4 @@ class GroqchatController extends GetxController {
     }
   }
 }
+

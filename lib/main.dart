@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get/get_navigation/src/routes/transitions_type.dart';
-import 'package:voicechat/app/core/theme/app_color.dart';
-import 'package:voicechat/app/core/theme/app_theme.dart';
+import 'package:speaking/app/core/theme/app_color.dart';
+import 'package:speaking/app/core/theme/app_theme.dart';
 
-import 'package:voicechat/app/routes/app_pages.dart';
-import 'package:voicechat/constants.dart';
-import 'package:voicechat/firebase_options.dart';
+import 'package:speaking/app/routes/app_pages.dart';
+import 'package:speaking/constants.dart';
+import 'package:speaking/firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
         child: SizedBox(
           width: kIsWeb ? 480 : double.infinity,
           child: GetMaterialApp(
-            title: "VoiceChat",
+            title: "speaking",
             initialRoute: AppPages.INITIAL,
             getPages: AppPages.routes,
             debugShowCheckedModeBanner: false,

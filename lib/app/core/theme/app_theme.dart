@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:voicechat/app/core/theme/app_color.dart';
+import 'package:speaking/app/core/theme/app_color.dart';
 
 ThemeData lightTheme() {
   return ThemeData(
