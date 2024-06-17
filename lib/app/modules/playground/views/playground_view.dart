@@ -133,7 +133,7 @@ class ChatWidget extends StatelessWidget {
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
                 color:
-                isUser ? AppColor.PRIMARY_500 : AppColor.PRIMARY_100),
+                isUser ? AppColor.PRIMARY : Colors.white),
             padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

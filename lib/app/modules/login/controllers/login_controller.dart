@@ -33,18 +33,19 @@ class LoginController extends GetxController {
       Get.log("Error: $error");
       UI.showSnackbar(message: "Login gagal, coba lagi");
     }
-    Get.find<FirebaseProvider>().signInWithGoogle().then((value) {
-      // UI.showSnackbar(message: "Login Berhasil");
-      if (value) {
-        Get.find<FirebaseProvider>().checkUserData();
-        Get.find<AuthService>().refreshUser();
-        Get.offAllNamed(Routes.PROFICIENCY);
-      } else {
-        UI.showSnackbar(message: "Terjadi kesalahan, coba lagi");
-      }
-    }).onError((error, stackTrace) {
-      Get.log("Error: $error");
-      UI.showSnackbar(message: "Login gagal, coba lagi");
-    });
+
+  //   Get.find<FirebaseProvider>().signInWithGoogle().then((value) {
+  //     // UI.showSnackbar(message: "Login Berhasil");
+  //     if (value) {
+  //       Get.find<FirebaseProvider>().checkUserData();
+  //       Get.find<AuthService>().refreshUser();
+  //       Get.offAllNamed(Routes.PROFICIENCY);
+  //     } else {
+  //       UI.showSnackbar(message: "Terjadi kesalahan, coba lagi");
+  //     }
+  //   }).onError((error, stackTrace) {
+  //     Get.log("Error: $error");
+  //     UI.showSnackbar(message: "Login gagal, coba lagi");
+  //   });
   }
 }

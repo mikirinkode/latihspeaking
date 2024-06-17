@@ -1,39 +1,8 @@
-import 'dart:convert';
 
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
-import 'package:speaking/constants.dart';
 
-
-class VoiceModel {
-  final String name;
-  final String locale;
-
-  VoiceModel({required this.name, required this.locale});
-
-  static List<VoiceModel> getVoiceList() => [
-        VoiceModel(name: "Female", locale: "English UK"),
-        VoiceModel(name: "Male", locale: "English UK"),
-      ];
-
-  static List<VoiceModel> getAIModelList() => [
-    // VoiceModel(name: "Gemini AI", locale: "by Google"),
-    VoiceModel(name: "Llama3", locale: "by Meta (running on Groq)"),
-  ];
-  static List<VoiceModel> getAgentList() => [
-    VoiceModel(name: Agent.aiAssistant, locale: ""),
-    VoiceModel(name: Agent.englishMentor, locale: ""),
-    VoiceModel(name: Agent.techRecruiter, locale: ""),
-  ];
-}
 
 class HomeController extends GetxController {
-  final voiceList = VoiceModel.getVoiceList();
-  final aiList = VoiceModel.getAIModelList();
-  final agentList = VoiceModel.getAgentList();
-  final selectedVoice = "Female".obs;
-  final selectedAIModel = "Llama3".obs;
-  final selectedAgent = Agent.aiAssistant.obs;
 
   @override
   void onInit() {
@@ -113,17 +82,5 @@ class HomeController extends GetxController {
   @override
   void onClose() {
     super.onClose();
-  }
-
-  void changeSelectedVoiceModel(String name) {
-    selectedVoice.value = name;
-  }
-
-  void changeSelectedAIModel(String name) {
-    selectedAIModel.value = name;
-  }
-
-  void changeSelectedAgent(String name) {
-    selectedAgent.value = name;
   }
 }

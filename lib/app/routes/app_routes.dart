@@ -7,6 +7,8 @@ abstract class Routes {
   static const PLAYGROUND = _Paths.PLAYGROUND;
   static const PROFICIENCY = _Paths.PROFICIENCY;
   static const LOGIN = _Paths.LOGIN;
+  static const SELECT_CONVERSATION = _Paths.SELECT_CONVERSATION;
+  static const CONVERSATION = _Paths.CONVERSATION;
 }
 
 abstract class _Paths {
@@ -15,4 +17,6 @@ abstract class _Paths {
   static const PLAYGROUND = '/playground';
   static const PROFICIENCY = '/proficiency';
   static const LOGIN = '/login';
+  static const SELECT_CONVERSATION = '/select-conversation';
+  static const CONVERSATION = '/conversation';
 }

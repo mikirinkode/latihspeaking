@@ -58,10 +58,11 @@ class HomeView extends GetView<HomeController> {
                 desc:
                 "Simulasi ngobrol dengan tema seperti pergi nonton ke bioskop atau ke restoran",
                 onTap: () {
-                  Get.toNamed(Routes.PLAYGROUND, arguments: {
-                    "VOICE_MODEL": "Female",
-                    "AI_AGENT": Agent.conversationalPracticeAgent
-                  });
+                  Get.toNamed(Routes.SELECT_CONVERSATION);
+                  // Get.toNamed(Routes.PLAYGROUND, arguments: {
+                  //   "VOICE_MODEL": "Female",
+                  //   "AI_AGENT": Agent.conversationalPracticeAgent
+                  // });
                 },
               ),
               PracticeCard(

@@ -30,14 +30,13 @@ class PlaygroundController extends GetxController {
 
   String get response => _response.value;
 
-  final _confidence = 0.0.obs;
-
-  double get confidence => _confidence.value;
+  // final _confidence = 0.0.obs;
+  // double get confidence => _confidence.value;
 
   final messages = <GroqMessage>[].obs;
   final selectedVoice = "".obs;
 
-  final pageTitle = "Llama3 x Groq".obs;
+  final pageTitle = "Playground".obs;
 
   /// Object
   late SpeechToText _speech;
@@ -57,11 +56,12 @@ class PlaygroundController extends GetxController {
     } else {
       _tts.setVoice({"name": "Google UK English Female", "locale": "en-GB"});
     }
+
     _tts.setErrorHandler((message) {
       Get.log("onStatus: tts error: $message");
     });
-
     _initializedAgent(Get.arguments["AI_AGENT"]);
+    Get.log("selected voice: ${selectedVoice.value}");
   }
 
   @override
@@ -78,22 +78,22 @@ class PlaygroundController extends GetxController {
 
   void _initializedAgent(String agent) {
     switch (agent) {
-      case Agent.englishMentor:
-        pageTitle.value = Agent.englishMentor;
-        messages.addAll([
-          GroqMessage("system", SystemPromptTemplate.englishMentor),
-          GroqMessage("assistant",
-              "Hi, I am here to help you improve your english speaking skills! are you ready? SAY LET'S GO!")
-        ]);
-        break;
-      case Agent.techRecruiter:
-        pageTitle.value = Agent.techRecruiter;
-        messages.addAll([
-          GroqMessage("system", SystemPromptTemplate.techRecruiter),
-          GroqMessage("assistant",
-              "Hello, welcome to the Mock Interview. Are you ready to start practicing Interview?")
-        ]);
-        break;
+      // case Agent.englishMentor:
+      //   pageTitle.value = Agent.englishMentor;
+      //   messages.addAll([
+      //     GroqMessage("system", SystemPromptTemplate.englishMentor),
+      //     GroqMessage("assistant",
+      //         "Hi, I am here to help you improve your english speaking skills! are you ready? SAY LET'S GO!")
+      //   ]);
+      //   break;
+      // case Agent.techRecruiter:
+      //   pageTitle.value = Agent.techRecruiter;
+      //   messages.addAll([
+      //     GroqMessage("system", SystemPromptTemplate.techRecruiter),
+      //     GroqMessage("assistant",
+      //         "Hello, welcome to the Mock Interview. Are you ready to start practicing Interview?")
+      //   ]);
+      //   break;
       case Agent.repeatAfterMeAgent:
         pageTitle.value = Agent.repeatAfterMeAgent;
         messages.addAll([
@@ -111,15 +111,15 @@ class PlaygroundController extends GetxController {
               "Hi there! Let's focus on improving your pronunciation, especially on tricky words. Are you ready to get started?")
         ]);
         break;
-      case Agent.conversationalPracticeAgent:
-        pageTitle.value = Agent.conversationalPracticeAgent;
-        messages.addAll([
-          GroqMessage(
-              "system", SystemPromptTemplate.conversationalPracticeAgent),
-          GroqMessage("assistant",
-              "Hey, I'm here to help you practice your conversational skills! Ready to have some fun conversations?")
-        ]);
-        break;
+      // case Agent.conversationalPracticeAgent:
+      //   pageTitle.value = Agent.conversationalPracticeAgent;
+      //   messages.addAll([
+      //     GroqMessage(
+      //         "system", SystemPromptTemplate.conversationalPracticeAgent),
+      //     GroqMessage("assistant",
+      //         "Hey, I'm here to help you practice your conversational skills! Ready to have some fun conversations?")
+      //   ]);
+      //   break;
       case Agent.casualChatAgent:
         pageTitle.value = Agent.casualChatAgent;
         messages.addAll([
@@ -151,8 +151,8 @@ class PlaygroundController extends GetxController {
         _speech.listen(
             onResult: (val) => {
               _text.value = val.recognizedWords,
-              if (val.hasConfidenceRating && val.confidence > 0)
-                {_confidence.value = val.confidence}
+              // if (val.hasConfidenceRating && val.confidence > 0)
+              //   {_confidence.value = val.confidence}
             });
       }
     } else {
