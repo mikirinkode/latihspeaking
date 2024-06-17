@@ -7,6 +7,7 @@ import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get/get_navigation/src/routes/transitions_type.dart';
 import 'package:speaking/app/core/theme/app_color.dart';
 import 'package:speaking/app/core/theme/app_theme.dart';
+import 'package:speaking/app/data/provider/api_provider.dart';
 
 import 'package:speaking/app/routes/app_pages.dart';
 import 'package:speaking/constants.dart';
@@ -19,6 +20,7 @@ import 'app/data/service/auth_service.dart';
 Future<void> initServices() async {
   Get.log("Starting services ...");
   await Get.putAsync(() => FirebaseProvider().init());
+  await Get.putAsync(() => ApiProvider().init());
   await Get.putAsync(() => AuthService().init());
   Get.log("All services started ...");
 }

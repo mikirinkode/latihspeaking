@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:flutter_tts/flutter_tts_web.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:speech_to_text/speech_to_text.dart';
@@ -27,7 +26,7 @@ class ConversationController extends GetxController {
   final isFinished = false.obs;
   final isSpeakingEnabled = true.obs; // TODO: LATER
   final currentFocusedMessage = (-1).obs;
-  final ttsState = TtsState.stopped.obs;
+  // final ttsState = TtsState.stopped.obs;
 
   final _isListening = false.obs;
 
@@ -49,7 +48,7 @@ class ConversationController extends GetxController {
     super.onInit();
     // theme("Trip to Bali, Indonesia");
     theme(Get.arguments["CONVERSATION_THEME"]);
-    initVoiceChat();
+    _initVoiceChat();
     getConversation();
   }
 
@@ -59,9 +58,13 @@ class ConversationController extends GetxController {
   }
 
   @override
-  void onClose() {}
+  void onClose() {
+    super.onClose();
+    _speech.stop();
+    _tts.stop();
+  }
 
-  void initVoiceChat() {
+  void _initVoiceChat() {
     selectedVoice("Female");
     _speech = SpeechToText();
     _tts = FlutterTts();

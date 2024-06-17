@@ -29,6 +29,7 @@ class SelectConversationView extends GetView<SelectConversationController> {
               ),
             )
           : ListView.builder(
+              padding: EdgeInsets.only(bottom: 16),
               itemCount: controller.conversationThemeList.length,
               itemBuilder: (context, index) {
                 var e = controller.conversationThemeList[index];
@@ -36,9 +37,8 @@ class SelectConversationView extends GetView<SelectConversationController> {
                   emoji: e.emoji,
                   theme: e.theme,
                   onTap: () {
-                    Get.toNamed(Routes.CONVERSATION, arguments: {
-                      "CONVERSATION_THEME": e.theme
-                    });
+                    Get.toNamed(Routes.CONVERSATION,
+                        arguments: {"CONVERSATION_THEME": e.theme});
                   },
                 );
               },

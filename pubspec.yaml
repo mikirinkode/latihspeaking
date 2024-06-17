@@ -57,6 +57,7 @@ dependencies:
   flutter_svg: ^2.0.10+1
   firebase_auth: ^5.1.0
   google_sign_in: ^6.2.1
+  url_launcher: ^6.3.0
 
 dev_dependencies:
   flutter_test:

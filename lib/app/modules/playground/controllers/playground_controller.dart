@@ -46,7 +46,24 @@ class PlaygroundController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    selectedVoice(Get.arguments["VOICE_MODEL"]);
+    _initVoiceChat();
+    _initializedAgent(Get.arguments["AI_AGENT"]);
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
+    _speech.stop();
+    _tts.stop();
+  }
+
+  void _initVoiceChat() {
+    selectedVoice("Female");
     _speech = SpeechToText();
     _tts = FlutterTts();
     _translator = GoogleTranslator();
@@ -60,20 +77,7 @@ class PlaygroundController extends GetxController {
     _tts.setErrorHandler((message) {
       Get.log("onStatus: tts error: $message");
     });
-    _initializedAgent(Get.arguments["AI_AGENT"]);
     Get.log("selected voice: ${selectedVoice.value}");
-  }
-
-  @override
-  void onReady() {
-    super.onReady();
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
-    _speech.stop();
-    _tts.stop();
   }
 
   void _initializedAgent(String agent) {

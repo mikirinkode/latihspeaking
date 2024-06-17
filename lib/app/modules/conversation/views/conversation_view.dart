@@ -27,7 +27,7 @@ class ConversationView extends GetView<ConversationController> {
                     decoration: BoxDecoration(color: Colors.white),
                     padding: const EdgeInsets.all(16),
                     child: const Text(
-                      "--- 🎉 Yeay! kamu telah menyelesaikan percakapan ini! ---",
+                      "🎉 Yeay! kamu telah menyelesaikan percakapan ini!",
                       textAlign: TextAlign.center,
                     ),
                   )
@@ -166,9 +166,9 @@ class ThemedChatWidget extends StatelessWidget {
                         styleSheet: MarkdownStyleSheet(
                             p: TextStyle(
                                 color: isUser
-                                    ? AppColor.NEUTRAL_500
+                                    ? AppColor.NEUTRAL_700
                                     : Colors.black,
-                                fontSize: 14,
+                                fontSize: 16,
                                 fontWeight: FontWeight.w400)),
                       ),
                       (isUser && isFocusedMessage && currentSaidText.isNotEmpty)
@@ -177,7 +177,7 @@ class ThemedChatWidget extends StatelessWidget {
                                 currentSaidText,
                                 style: TextStyle(
                                     color: AppColor.PRIMARY,
-                                    fontSize: 14,
+                                    fontSize: 16,
                                     fontWeight: FontWeight.w400),
                               ),
                             )
