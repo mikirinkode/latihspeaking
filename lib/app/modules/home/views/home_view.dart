@@ -44,7 +44,7 @@ class HomeView extends GetView<HomeController> {
               PracticeCard(
                 icon: "🔊",
                 title: "Pronunciation Practice",
-                desc: "Fokus berlatih ke kata kata yang tricky",
+                desc: "Fokus berlatih pengucapan kata kata yang tricky",
                 onTap: () {
                   Get.toNamed(Routes.PLAYGROUND, arguments: {
                     "VOICE_MODEL": "Female",

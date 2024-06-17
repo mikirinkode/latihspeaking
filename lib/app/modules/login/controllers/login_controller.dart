@@ -25,7 +25,7 @@ class LoginController extends GetxController {
       if (success) {
         await Get.find<FirebaseProvider>().checkUserData();
         Get.find<AuthService>().refreshUser();
-        Get.offAllNamed(Routes.PROFICIENCY);
+        Get.offAllNamed(Routes.HOME);
       } else {
         UI.showSnackbar(message: "Terjadi kesalahan, coba lagi");
       }

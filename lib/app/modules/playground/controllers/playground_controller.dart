@@ -125,7 +125,7 @@ class PlaygroundController extends GetxController {
         messages.addAll([
           GroqMessage("system", SystemPromptTemplate.casualChatAgent),
           GroqMessage("assistant",
-              "Hey there! I'm here for some casual chatting. Ready to have a relaxed conversation?")
+              "Hey there! I'm here for some casual chatting. So, how was your day? Anything exciting happen recently?")
         ]);
         break;
 
