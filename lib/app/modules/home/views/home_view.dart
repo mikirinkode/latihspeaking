@@ -28,8 +28,8 @@ class HomeView extends GetView<HomeController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               kIsWeb &&
-                  (defaultTargetPlatform == TargetPlatform.iOS ||
-                      defaultTargetPlatform == TargetPlatform.android)
+                      (defaultTargetPlatform == TargetPlatform.iOS ||
+                          defaultTargetPlatform == TargetPlatform.android)
                   ? GestureDetector(
                       onTap: () {
                         launchUrl(
@@ -105,7 +105,7 @@ class HomeView extends GetView<HomeController> {
               ),
               PracticeCard(
                 icon: "👤",
-                title: "Free talk",
+                title: "Free talk (Uji Coba)",
                 desc:
                     "Ngobrol sesuka kamu, ekspresikan diri dan latih speaking mu!",
                 onTap: () {
@@ -117,9 +117,9 @@ class HomeView extends GetView<HomeController> {
               ),
               PracticeCard(
                 icon: "🔁",
-                title: "Repeat after me (Beta)",
+                title: "Repeat after me (Uji Coba)",
                 desc:
-                "AI Buddy akan mengucapkan sebuah kalimat. Kamu bisa mengulanginya untuk melatih intonasi dan pelafalan.",
+                    "AI Buddy akan mengucapkan sebuah kalimat. Kamu bisa mengulanginya untuk melatih intonasi dan pelafalan.",
                 onTap: () {
                   Get.toNamed(Routes.PLAYGROUND, arguments: {
                     "VOICE_MODEL": "Female",
@@ -129,7 +129,7 @@ class HomeView extends GetView<HomeController> {
               ),
               PracticeCard(
                 icon: "🔊",
-                title: "Pronunciation Practice  (Beta)",
+                title: "Pronunciation Practice  (Uji Coba)",
                 desc: "Fokus berlatih pengucapan kata kata yang tricky",
                 onTap: () {
                   Get.toNamed(Routes.PLAYGROUND, arguments: {
@@ -190,12 +190,34 @@ class HomeView extends GetView<HomeController> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("LatihSpeaking", style: TextStyle(color: AppColor.PRIMARY, fontSize: 14, fontWeight: FontWeight.bold),),
+                        Text(
+                          "LatihSpeaking",
+                          style: TextStyle(
+                              color: AppColor.PRIMARY,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold),
+                        ),
                         SizedBox(
                           height: 8,
                         ),
                         Text(
-                            "adalah platform latihan bicara bahasa inggris berbasis AI dengan fitur percakapan yang mudah, menyenangkan dan Gratis!")
+                            "adalah platform latihan bicara bahasa inggris berbasis AI dengan fitur percakapan yang mudah, menyenangkan dan Gratis!"),
+                        SizedBox(height: 16),
+                        Text("Punya saran / feedback?"),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        SecondaryButton(
+                            text: "Kirim Feedback", onPressed: () {
+                          if (kIsWeb) {
+                            launchUrl(
+                              Uri.parse("https://forms.gle/bxRNgavRcVwxCdo67"),
+                              mode: LaunchMode.externalApplication,
+                            );
+                          } else {
+                            Get.toNamed(Routes.EMBEDDED_WEB);
+                          }
+                        })
                       ],
                     ),
                   ))

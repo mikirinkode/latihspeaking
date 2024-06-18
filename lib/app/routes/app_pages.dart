@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:speaking/app/data/middleware/auth_middleware.dart';
 import 'package:speaking/app/modules/conversation/bindings/conversation_binding.dart';
 import 'package:speaking/app/modules/conversation/views/conversation_view.dart';
+import 'package:speaking/app/modules/embedded_web/bindings/embedded_web_binding.dart';
+import 'package:speaking/app/modules/embedded_web/views/embedded_web_view.dart';
 import 'package:speaking/app/modules/introduction/bindings/introduction_binding.dart';
 import 'package:speaking/app/modules/introduction/views/introduction_view.dart';
 import 'package:speaking/app/modules/login/bindings/login_binding.dart';
@@ -60,6 +62,11 @@ class AppPages {
       name: _Paths.INTRODUCTION,
       page: () => IntroductionView(),
       binding: IntroductionBinding(),
+    ),
+    GetPage(
+      name: _Paths.EMBEDDED_WEB,
+      page: () => EmbeddedWebView(),
+      binding: EmbeddedWebBinding(),
     ),
   ];
 }
