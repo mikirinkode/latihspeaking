@@ -1,10 +1,10 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get/get.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:translator/translator.dart';
-
 
 import 'package:http/http.dart' as http;
 import '../../../../constants.dart';
@@ -12,11 +12,12 @@ import '../../../data/model/groq_message.dart';
 import '../../../data/model/groq_response.dart';
 import '../../../utils/text_utils.dart';
 
-
 class PlaygroundController extends GetxController {
   final _isListening = false.obs;
 
   bool get isListening => _isListening.value;
+
+  final _isSpeechRecognizerEnabled = false.obs;
 
   final _isGeneratingResponse = false.obs;
 
@@ -62,11 +63,33 @@ class PlaygroundController extends GetxController {
     _tts.stop();
   }
 
-  void _initVoiceChat() {
+  Future<void> _initVoiceChat() async {
     selectedVoice("Female");
     _speech = SpeechToText();
     _tts = FlutterTts();
     _translator = GoogleTranslator();
+
+    /// This has to happen only once per app
+    _isSpeechRecognizerEnabled.value = await _speech.initialize(
+        onStatus: (val) async {
+          // Get.log("onStatus: $val");
+          if (_isListening.value && val == "notListening") {
+            // on android speech can be automatically turned off after few seconds
+            // to handle it, if the _isListening is still true and status was notListening
+            // then force it to continue listening
+
+            // Get.log("onStatus: should continue");
+            await _speech.stop();
+            await continueListening();
+          }
+        },
+        onError: (val) {
+          // Get.log("onError: $val");
+        },
+        finalTimeout: const Duration(minutes: 5),
+        options: [
+          SpeechToText.androidAlwaysUseStop,
+        ]);
 
     if (selectedVoice.value == "Male") {
       _tts.setVoice({"name": "Google UK English Male", "locale": "en-GB"});
@@ -143,28 +166,64 @@ class PlaygroundController extends GetxController {
   }
 
   startListening() async {
+    // _tts.stop();
+    // if (!isListening) {
+    //   bool available = await _speech.initialize(
+    //     onStatus: (val) => Get.log("onStatus: $val"),
+    //     onError: (val) => Get.log("onError: $val"),
+    //   );
+    //   if (available) {
+    //     _text.value = "";
+    //     _isListening.value = true;
+    //     _speech.listen(
+    //         onResult: (val) => {
+    //               _text.value = val.recognizedWords,
+    //               // if (val.hasConfidenceRating && val.confidence > 0)
+    //               //   {_confidence.value = val.confidence}
+    //             });
+    //   }
+    // } else {
+    //   _isListening.value = false;
+    //   messages.add(GroqMessage("user", text));
+    //   _speech.stop();
+    //   _getModelResponse();
+    // }
+    // Get.log("startListening() called");
+    _text.value = "";
+    continueListening();
+  }
+
+  continueListening() async {
+    // Get.log("continueListening() called");
     _tts.stop();
-    if (!isListening) {
-      bool available = await _speech.initialize(
-        onStatus: (val) => Get.log("onStatus: $val"),
-        onError: (val) => Get.log("onError: $val"),
-      );
-      if (available) {
-        _text.value = "";
-        _isListening.value = true;
-        _speech.listen(
-            onResult: (val) => {
-              _text.value = val.recognizedWords,
-              // if (val.hasConfidenceRating && val.confidence > 0)
-              //   {_confidence.value = val.confidence}
-            });
-      }
-    } else {
-      _isListening.value = false;
-      messages.add(GroqMessage("user", text));
-      _speech.stop();
-      _getModelResponse();
+    if (_isSpeechRecognizerEnabled.value) {
+      _isListening.value = true;
+      _speech.listen(
+          listenOptions: SpeechListenOptions(
+              listenMode: ListenMode.dictation,
+              partialResults: (kIsWeb) ? true : false),
+          onResult: (val) {
+            Get.log("recognized value: ${val.recognizedWords}");
+            Get.log(
+                "!_text.value.contains(val.recognizedWords): ${!_text.value.contains(val.recognizedWords)}");
+
+            if (kIsWeb) {
+              _text.value = val.recognizedWords;
+            } else {
+              if (!_text.value.contains(val.recognizedWords)) {
+                _text.value = "${_text.value} ${val.recognizedWords}";
+              }
+            }
+          });
     }
+  }
+
+  stopListening() async {
+    Get.log("stopListening() called");
+    _isListening.value = false;
+    messages.add(GroqMessage("user", text));
+    _speech.stop();
+    _getModelResponse();
   }
 
   Future<void> _getModelResponse() async {
@@ -190,7 +249,7 @@ class PlaygroundController extends GetxController {
       if (apiResponse.statusCode == 200) {
         Get.log("onSuccess::response data: ${apiResponse.body}");
         final groqResponse =
-        GroqResponse.fromJson(jsonDecode(apiResponse.body));
+            GroqResponse.fromJson(jsonDecode(apiResponse.body));
         Get.log("groqResponse::${groqResponse.choices.first.message.content}");
 
         _text.value = "";
@@ -253,4 +312,3 @@ class PlaygroundController extends GetxController {
     }
   }
 }
-

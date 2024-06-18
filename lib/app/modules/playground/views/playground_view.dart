@@ -27,7 +27,9 @@ class PlaygroundView extends GetView<PlaygroundController> {
             repeat: true,
             child: FloatingActionButton(
               onPressed: () {
-                controller.startListening();
+                controller.isListening
+                    ? controller.stopListening()
+                    : controller.startListening();
               },
               backgroundColor: AppColor.PRIMARY_500,
               foregroundColor: Colors.white,

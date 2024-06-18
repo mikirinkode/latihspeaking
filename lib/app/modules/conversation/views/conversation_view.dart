@@ -52,7 +52,11 @@ class ConversationView extends GetView<ConversationController> {
                         child: FloatingActionButton(
                           onPressed: () {
                             if (controller.isSpeakingEnabled.value) {
-                              controller.startListening();
+                              if(controller.isListening){
+                                controller.stopListening();
+                              } else {
+                                controller.startListening();
+                              }
                             }
                           },
                           backgroundColor: controller.isSpeakingEnabled.value

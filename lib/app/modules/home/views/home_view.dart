@@ -61,7 +61,7 @@ class HomeView extends GetView<HomeController> {
                                 height: 4,
                               ),
                               Text(
-                                  "Kamu bisa pindah ke aplikasi versi Playstore agar dapat merasakan pengalaman yang lebih baik.")
+                                  "Kamu bisa pindah ke aplikasi versi Playstore agar dapat merasakan pengalaman yang lebih baik. Klik disini untuk download.")
                             ],
                           ),
                         ),

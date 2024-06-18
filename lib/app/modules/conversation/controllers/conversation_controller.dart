@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -26,7 +27,7 @@ class ConversationController extends GetxController {
   final isFinished = false.obs;
   final isSpeakingEnabled = true.obs; // TODO: LATER
   final currentFocusedMessage = (-1).obs;
-  // final ttsState = TtsState.stopped.obs;
+  final _isSpeechRecognizerEnabled = false.obs;
 
   final _isListening = false.obs;
 
@@ -64,11 +65,33 @@ class ConversationController extends GetxController {
     _tts.stop();
   }
 
-  void _initVoiceChat() {
+  Future<void> _initVoiceChat() async {
     selectedVoice("Female");
     _speech = SpeechToText();
     _tts = FlutterTts();
     _translator = GoogleTranslator();
+
+    /// This has to happen only once per app
+    _isSpeechRecognizerEnabled.value = await _speech.initialize(
+        onStatus: (val) async {
+          // Get.log("onStatus: $val");
+          if (_isListening.value && val == "notListening") {
+            // on android speech can be automatically turned off after few seconds
+            // to handle it, if the _isListening is still true and status was notListening
+            // then force it to continue listening
+
+            // Get.log("onStatus: should continue");
+            await _speech.stop();
+            await continueListening();
+          }
+        },
+        onError: (val) {
+          // Get.log("onError: $val");
+        },
+        finalTimeout: const Duration(minutes: 5),
+        options: [
+          SpeechToText.androidAlwaysUseStop,
+        ]);
 
     if (selectedVoice.value == "Male") {
       _tts.setVoice({"name": "Google UK English Male", "locale": "en-GB"});
@@ -154,52 +177,81 @@ class ConversationController extends GetxController {
   }
 
   startListening() async {
+    // _tts.stop();
+    // if (!isListening) {
+    //   bool available = await _speech.initialize(
+    //       // onStatus: (val) => Get.log("onStatus: $val"),
+    //       // onError: (val) => Get.log("onError: $val"),
+    //       );
+    //   if (available) {
+    //     Get.log("onStatus: speech start listening");
+    //     _nextMessage();
+    //     _text.value = "";
+    //     _isListening.value = true;
+    //     _speech.listen(
+    //         onResult: (val) => {
+    //               _text.value = val.recognizedWords,
+    //               // if (val.hasConfidenceRating && val.confidence > 0)
+    //               //   {_confidence.value = val.confidence}
+    //             });
+    //   }
+    // } else {}
+    // Get.log("startListening() called");
+    _nextMessage();
+    _text.value = "";
+    continueListening();
+  }
+
+  continueListening() async {
+    // Get.log("continueListening() called");
     _tts.stop();
-    if (!isListening) {
-      bool available = await _speech.initialize(
-          // onStatus: (val) => Get.log("onStatus: $val"),
-          // onError: (val) => Get.log("onError: $val"),
-          );
-      if (available) {
-        Get.log("onStatus: speech start listening");
-        _nextMessage();
-        _text.value = "";
-        _isListening.value = true;
-        _speech.listen(
-            onResult: (val) => {
-                  _text.value = val.recognizedWords,
-                  // if (val.hasConfidenceRating && val.confidence > 0)
-                  //   {_confidence.value = val.confidence}
-                });
-      }
-    } else {
-      _isListening.value = false;
-      _speech.stop();
-      Get.log("onStatus: listening done");
-      // update the previous message
-      ConversationMessage currentMessage =
-          conversationMessages.elementAt(currentFocusedMessage.value);
-
-      ConversationMessage updatedMessage = ConversationMessage(
-          role: currentMessage.role,
-          content: currentMessage.content,
-          wordSaidByUser: text);
-      shownMessages[currentFocusedMessage.value] = updatedMessage;
-
-      // show next message
-      shownMessages
-          .add(conversationMessages.elementAt(currentFocusedMessage.value + 1));
-
-      if (currentFocusedMessage.value + 2 < conversationMessages.length - 1) {
-        // show the user too
-        shownMessages.add(
-            conversationMessages.elementAt(currentFocusedMessage.value + 2));
-      }
-
-      Get.log("onStatus: next messages displayed");
-      _nextMessage();
-      _continueConversation();
+    if (_isSpeechRecognizerEnabled.value) {
+      _isListening.value = true;
+      _speech.listen(
+          listenOptions: SpeechListenOptions(
+              listenMode: ListenMode.dictation, partialResults: (kIsWeb) ? true : false),
+          onResult: (val) {
+            Get.log("recognized value: ${val.recognizedWords}");
+            Get.log(
+                "!_text.value.contains(val.recognizedWords): ${!_text.value.contains(val.recognizedWords)}");
+            if (kIsWeb){
+              _text.value = val.recognizedWords;
+            } else {
+              if (!_text.value.contains(val.recognizedWords)) {
+                _text.value = "${_text.value} ${val.recognizedWords}";
+              }
+            }
+          });
     }
+  }
+
+  stopListening() async {
+    Get.log("stopListening() called");
+    _isListening.value = false;
+    _speech.stop();
+    // update the previous message
+    ConversationMessage currentMessage =
+        conversationMessages.elementAt(currentFocusedMessage.value);
+
+    ConversationMessage updatedMessage = ConversationMessage(
+        role: currentMessage.role,
+        content: currentMessage.content,
+        wordSaidByUser: text);
+    shownMessages[currentFocusedMessage.value] = updatedMessage;
+
+    // show next message
+    shownMessages
+        .add(conversationMessages.elementAt(currentFocusedMessage.value + 1));
+
+    if (currentFocusedMessage.value + 2 < conversationMessages.length - 1) {
+      // show the user too
+      shownMessages
+          .add(conversationMessages.elementAt(currentFocusedMessage.value + 2));
+    }
+
+    Get.log("onStatus: next messages displayed");
+    _nextMessage();
+    _continueConversation();
   }
 
   void _continueConversation() {

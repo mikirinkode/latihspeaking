@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get/get.dart';
 import 'package:speaking/constants.dart';
@@ -14,7 +15,7 @@ class IntroductionController extends GetxController {
 
   bool get isListening => _isListening.value;
 
-  final _isSpeechEnabled = false.obs;
+  final _isSpeechRecognizerEnabled = false.obs;
 
   final _isGeneratingResponse = false.obs;
 
@@ -63,7 +64,7 @@ class IntroductionController extends GetxController {
     _translator = GoogleTranslator();
 
     /// This has to happen only once per app
-    _isSpeechEnabled.value = await _speech.initialize(
+    _isSpeechRecognizerEnabled.value = await _speech.initialize(
         onStatus: (val) async {
           // Get.log("onStatus: $val");
           if (_isListening.value && val == "notListening") {
@@ -135,11 +136,11 @@ class IntroductionController extends GetxController {
   continueListening() async {
     // Get.log("continueListening() called");
     _tts.stop();
-    if (_isSpeechEnabled.value) {
+    if (_isSpeechRecognizerEnabled.value) {
       _isListening.value = true;
       _speech.listen(
           listenOptions: SpeechListenOptions(
-              listenMode: ListenMode.dictation, partialResults: false),
+              listenMode: ListenMode.dictation, partialResults: (kIsWeb) ? true : false),
           onResult: (val) {
             Get.log("recognized value: ${val.recognizedWords}");
             Get.log(
@@ -152,8 +153,12 @@ class IntroductionController extends GetxController {
                 _text.value = "hello";
               }
             } else {
-              if (!_text.value.contains(val.recognizedWords)) {
-                _text.value = "${_text.value} ${val.recognizedWords}";
+              if (kIsWeb){
+                _text.value = val.recognizedWords;
+              } else {
+                if (!_text.value.contains(val.recognizedWords)) {
+                  _text.value = "${_text.value} ${val.recognizedWords}";
+                }
               }
             }
           });
