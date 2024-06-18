@@ -27,7 +27,9 @@ class HomeView extends GetView<HomeController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              kIsWeb
+              kIsWeb &&
+                  (defaultTargetPlatform == TargetPlatform.iOS ||
+                      defaultTargetPlatform == TargetPlatform.android)
                   ? GestureDetector(
                       onTap: () {
                         launchUrl(
@@ -39,7 +41,7 @@ class HomeView extends GetView<HomeController> {
                         padding: const EdgeInsets.all(16.0),
                         child: Container(
                           decoration: BoxDecoration(
-                              color: AppColor.PRIMARY_100,
+                              color: AppColor.PRIMARY_50,
                               border: Border.all(
                                 width: 2,
                                 color: AppColor.PRIMARY_500,
@@ -49,7 +51,7 @@ class HomeView extends GetView<HomeController> {
                           child: Column(
                             children: [
                               Text(
-                                "Info!",
+                                "Info Penting!",
                                 style: TextStyle(
                                     color: AppColor.PRIMARY_500,
                                     fontSize: 14,
@@ -59,7 +61,7 @@ class HomeView extends GetView<HomeController> {
                                 height: 4,
                               ),
                               Text(
-                                  "Apabila kamu mengakses LatihSpeaking melalui website di SmartPhone, segera beralih ke versi Playstore agar dapat merasakan pengalaman yang lebih baik.")
+                                  "Kamu bisa pindah ke aplikasi versi Playstore agar dapat merasakan pengalaman yang lebih baik.")
                             ],
                           ),
                         ),

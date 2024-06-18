@@ -22,7 +22,7 @@ class SelectConversationView extends GetView<SelectConversationController> {
               child: Container(
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
-                    color: AppColor.PRIMARY_100),
+                    color: Colors.white),
                 padding: const EdgeInsets.all(16),
                 child: LoadingAnimationWidget.fourRotatingDots(
                     color: AppColor.PRIMARY_500, size: 24),

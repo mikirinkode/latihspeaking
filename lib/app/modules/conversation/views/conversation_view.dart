@@ -152,10 +152,10 @@ class ThemedChatWidget extends StatelessWidget {
                           color: isFocusedMessage
                               ? AppColor.PRIMARY
                               : isUser
-                                  ? AppColor.PRIMARY_100
+                                  ? AppColor.PRIMARY_50
                                   : Colors.white),
                       borderRadius: BorderRadius.circular(16),
-                      color: isUser ? AppColor.PRIMARY_100 : Colors.white),
+                      color: isUser ? AppColor.PRIMARY_50 : Colors.white),
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
