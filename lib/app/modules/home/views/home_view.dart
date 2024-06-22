@@ -27,9 +27,7 @@ class HomeView extends GetView<HomeController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              kIsWeb &&
-                      (defaultTargetPlatform == TargetPlatform.iOS ||
-                          defaultTargetPlatform == TargetPlatform.android)
+              kIsWeb && defaultTargetPlatform == TargetPlatform.android
                   ? GestureDetector(
                       onTap: () {
                         launchUrl(

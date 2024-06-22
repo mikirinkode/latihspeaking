@@ -8,6 +8,7 @@ import 'package:translator/translator.dart';
 import '../../../../constants.dart';
 import '../../../data/model/groq_message.dart';
 import '../../../data/model/groq_response.dart';
+import '../../../data/provider/speech_recognizer.dart';
 import '../../../utils/text_utils.dart';
 
 class InterviewController extends GetxController {
@@ -38,7 +39,6 @@ class InterviewController extends GetxController {
   final pageTitle = "Playground".obs;
 
   /// Object
-  late SpeechToText _speech;
   late FlutterTts _tts;
   late GoogleTranslator _translator;
 
@@ -57,37 +57,18 @@ class InterviewController extends GetxController {
   @override
   void onClose() {
     super.onClose();
-    _speech.stop();
+    Get.find<SpeechRecognizer>().onClose();
     _tts.stop();
   }
 
   Future<void> _initVoiceChat() async {
     selectedVoice("Female");
-    _speech = SpeechToText();
     _tts = FlutterTts();
     _translator = GoogleTranslator();
 
     /// This has to happen only once per app
-    _isSpeechRecognizerEnabled.value = await _speech.initialize(
-        onStatus: (val) async {
-          // Get.log("onStatus: $val");
-          if (_isListening.value && val == "notListening") {
-            // on android speech can be automatically turned off after few seconds
-            // to handle it, if the _isListening is still true and status was notListening
-            // then force it to continue listening
-
-            // Get.log("onStatus: should continue");
-            await _speech.stop();
-            await continueListening();
-          }
-        },
-        onError: (val) {
-          // Get.log("onError: $val");
-        },
-        finalTimeout: const Duration(minutes: 5),
-        options: [
-          SpeechToText.androidAlwaysUseStop,
-        ]);
+    _isSpeechRecognizerEnabled.value =
+        Get.find<SpeechRecognizer>().isEnabled;
 
     if (selectedVoice.value == "Male") {
       _tts.setVoice({"name": "Google UK English Male", "locale": "en-GB"});
@@ -120,20 +101,17 @@ class InterviewController extends GetxController {
     _tts.stop();
     if (_isSpeechRecognizerEnabled.value) {
       _isListening.value = true;
-      _speech.listen(
-          listenOptions: SpeechListenOptions(
-              listenMode: ListenMode.dictation,
-              partialResults: (kIsWeb) ? true : false),
-          onResult: (val) {
-            Get.log("recognized value: ${val.recognizedWords}");
+      Get.find<SpeechRecognizer>().continueListening(
+          onResultCallback: (String val) {
+            Get.log("recognized value: ${val}");
             Get.log(
-                "!_text.value.contains(val.recognizedWords): ${!_text.value.contains(val.recognizedWords)}");
+                "!_text.value.contains(val.recognizedWords): ${!_text.value.contains(val)}");
 
             if (kIsWeb) {
-              _text.value = val.recognizedWords;
+              _text.value = val;
             } else {
-              if (!_text.value.contains(val.recognizedWords)) {
-                _text.value = "${_text.value} ${val.recognizedWords}";
+              if (!_text.value.contains(val)) {
+                _text.value = "${_text.value} ${val}";
               }
             }
           });
@@ -144,7 +122,7 @@ class InterviewController extends GetxController {
     Get.log("stopListening() called");
     _isListening.value = false;
     messages.add(GroqMessage("user", text));
-    _speech.stop();
+    Get.find<SpeechRecognizer>().stopListening();
     _getModelResponse();
   }
 

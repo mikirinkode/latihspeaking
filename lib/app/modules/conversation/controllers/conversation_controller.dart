@@ -11,6 +11,7 @@ import '../../../../constants.dart';
 import '../../../data/model/conversation_message.dart';
 import '../../../data/model/groq_message.dart';
 import '../../../data/model/groq_response.dart';
+import '../../../data/provider/speech_recognizer.dart';
 
 class ConversationController extends GetxController {
   // for initial message prompt
@@ -40,7 +41,6 @@ class ConversationController extends GetxController {
   final selectedVoice = "".obs;
 
   /// Object
-  late SpeechToText _speech;
   late FlutterTts _tts;
   late GoogleTranslator _translator;
 
@@ -61,37 +61,17 @@ class ConversationController extends GetxController {
   @override
   void onClose() {
     super.onClose();
-    _speech.stop();
+    Get.find<SpeechRecognizer>().onClose();
     _tts.stop();
   }
 
   Future<void> _initVoiceChat() async {
     selectedVoice("Female");
-    _speech = SpeechToText();
     _tts = FlutterTts();
     _translator = GoogleTranslator();
 
-    /// This has to happen only once per app
-    _isSpeechRecognizerEnabled.value = await _speech.initialize(
-        onStatus: (val) async {
-          // Get.log("onStatus: $val");
-          if (_isListening.value && val == "notListening") {
-            // on android speech can be automatically turned off after few seconds
-            // to handle it, if the _isListening is still true and status was notListening
-            // then force it to continue listening
-
-            // Get.log("onStatus: should continue");
-            await _speech.stop();
-            await continueListening();
-          }
-        },
-        onError: (val) {
-          // Get.log("onError: $val");
-        },
-        finalTimeout: const Duration(minutes: 5),
-        options: [
-          SpeechToText.androidAlwaysUseStop,
-        ]);
+    _isSpeechRecognizerEnabled.value =
+        Get.find<SpeechRecognizer>().isEnabled;
 
     if (selectedVoice.value == "Male") {
       _tts.setVoice({"name": "Google UK English Male", "locale": "en-GB"});
@@ -187,15 +167,13 @@ class ConversationController extends GetxController {
     _tts.stop();
     if (_isSpeechRecognizerEnabled.value) {
       _isListening.value = true;
-      _speech.listen(
-          listenOptions: SpeechListenOptions(
-              listenMode: ListenMode.dictation, partialResults: (kIsWeb) ? true : false),
-          onResult: (val) {
+      Get.find<SpeechRecognizer>().continueListening(
+          onResultCallback: (String val) {
             if (kIsWeb){
-              _text.value = val.recognizedWords;
+              _text.value = val;
             } else {
-              if (!_text.value.contains(val.recognizedWords)) {
-                _text.value = "${_text.value} ${val.recognizedWords}";
+              if (!_text.value.contains(val)) {
+                _text.value = "${_text.value} ${val}";
               }
             }
           });
@@ -205,7 +183,7 @@ class ConversationController extends GetxController {
   stopListening() async {
     Get.log("stopListening() called");
     _isListening.value = false;
-    _speech.stop();
+    Get.find<SpeechRecognizer>().stopListening();
     // update the previous message
     ConversationMessage currentMessage =
         conversationMessages.elementAt(currentFocusedMessage.value);
@@ -258,7 +236,7 @@ class ConversationController extends GetxController {
         Get.log("CurrentMessageIndex has reach the last");
 
         var conversationMessageJson = shownMessages.map((e) => e.toJson()).toList();
-        Get.log("conversation json: ${conversationMessageJson}");
+        // Get.log("conversation json: ${conversationMessageJson}");
         isConversationOnGoing.value = false;
         isFinished.value = true;
       }

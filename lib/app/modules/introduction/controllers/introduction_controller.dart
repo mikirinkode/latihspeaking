@@ -1,11 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get/get.dart';
+import 'package:speaking/app/data/provider/speech_recognizer.dart';
 import 'package:speaking/constants.dart';
-import 'package:speech_to_text/speech_to_text.dart';
 import 'package:translator/translator.dart';
 
-import 'package:http/http.dart' as http;
 import '../../../data/model/groq_message.dart';
 import '../../../data/provider/api_provider.dart';
 import '../../../utils/text_utils.dart';
@@ -35,7 +34,6 @@ class IntroductionController extends GetxController {
   final isFinished = false.obs;
 
   /// Object
-  late SpeechToText _speech;
   late FlutterTts _tts;
   late GoogleTranslator _translator;
 
@@ -53,37 +51,16 @@ class IntroductionController extends GetxController {
   @override
   void onClose() {
     super.onClose();
-    _speech.stop();
+    Get.find<SpeechRecognizer>().onClose();
     _tts.stop();
   }
 
   Future<void> _initVoiceChat() async {
     selectedVoice("Female");
-    _speech = SpeechToText();
     _tts = FlutterTts();
     _translator = GoogleTranslator();
-
-    /// This has to happen only once per app
-    _isSpeechRecognizerEnabled.value = await _speech.initialize(
-        onStatus: (val) async {
-          // Get.log("onStatus: $val");
-          if (_isListening.value && val == "notListening") {
-            // on android speech can be automatically turned off after few seconds
-            // to handle it, if the _isListening is still true and status was notListening
-            // then force it to continue listening
-
-            // Get.log("onStatus: should continue");
-            await _speech.stop();
-            await continueListening();
-          }
-        },
-        onError: (val) {
-          // Get.log("onError: $val");
-        },
-        finalTimeout: const Duration(minutes: 5),
-        options: [
-          SpeechToText.androidAlwaysUseStop,
-        ]);
+    _isSpeechRecognizerEnabled.value =
+        Get.find<SpeechRecognizer>().isEnabled;
 
     if (selectedVoice.value == "Male") {
       _tts.setVoice({"name": "Google UK English Male", "locale": "en-GB"});
@@ -114,7 +91,7 @@ class IntroductionController extends GetxController {
         _response.value = result;
         messages.add(GroqMessage("assistant", response));
         _speak(TextUtils.removeAsterisk(response));
-        if (result.contains("INTRODUCTION COMPLETED")){
+        if (result.contains("INTRODUCTION COMPLETED")) {
           isFinished.value = true;
         }
       }).onError((error, stackTrace) {
@@ -128,40 +105,37 @@ class IntroductionController extends GetxController {
   }
 
   startListening() async {
-    // Get.log("startListening() called");
+    Get.log("startListening() called");
     _text.value = "";
     continueListening();
   }
 
   continueListening() async {
-    // Get.log("continueListening() called");
+    Get.log("continueListening() called");
     _tts.stop();
     if (_isSpeechRecognizerEnabled.value) {
       _isListening.value = true;
-      _speech.listen(
-          listenOptions: SpeechListenOptions(
-              listenMode: ListenMode.dictation, partialResults: (kIsWeb) ? true : false),
-          onResult: (val) {
-            // Get.log("recognized value: ${val.recognizedWords}");
-            // Get.log(
-            //     "!_text.value.contains(val.recognizedWords): ${!_text.value.contains(val.recognizedWords)}");
-            if (messages.length <= 1) {
-              // first message should be hi or hello
-              if (val.recognizedWords.toLowerCase() == "hi") {
-                _text.value = "hi";
-              } else if (val.recognizedWords.toLowerCase() == "hello") {
-                _text.value = "hello";
-              }
-            } else {
-              if (kIsWeb){
-                _text.value = val.recognizedWords;
-              } else {
-                if (!_text.value.contains(val.recognizedWords)) {
-                  _text.value = "${_text.value} ${val.recognizedWords}";
-                }
-              }
-            }
-          });
+      Get.find<SpeechRecognizer>().continueListening(
+          onResultCallback: (String val) {
+        // Get.log("val: $val");
+        if (messages.length <= 1) {
+          // first message should be hi or hello
+          if (val.toLowerCase() == "hi") {
+            _text.value = "hi";
+          } else if (val.toLowerCase() == "hello") {
+            _text.value = "hello";
+          }
+        } else {
+          if (kIsWeb) {
+            _text.value = val;
+          } else {
+            _text.value = val;
+            // if (!_text.value.contains(val)) {
+            //   _text.value = "${_text.value} ${val}";
+            // }
+          }
+        }
+      });
     }
   }
 
@@ -169,7 +143,7 @@ class IntroductionController extends GetxController {
     Get.log("stopListening() called");
     _isListening.value = false;
     messages.add(GroqMessage("user", text));
-    _speech.stop();
+    Get.find<SpeechRecognizer>().stopListening();
     _getModelResponse();
   }
 

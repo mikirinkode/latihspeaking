@@ -8,6 +8,7 @@ import 'package:get/get_navigation/src/routes/transitions_type.dart';
 import 'package:speaking/app/core/theme/app_color.dart';
 import 'package:speaking/app/core/theme/app_theme.dart';
 import 'package:speaking/app/data/provider/api_provider.dart';
+import 'package:speaking/app/data/provider/speech_recognizer.dart';
 
 import 'package:speaking/app/routes/app_pages.dart';
 import 'package:speaking/constants.dart';
@@ -22,6 +23,7 @@ Future<void> initServices() async {
   await Get.putAsync(() => FirebaseProvider().init());
   await Get.putAsync(() => ApiProvider().init());
   await Get.putAsync(() => AuthService().init());
+  await Get.putAsync(() => SpeechRecognizer().init());
   Get.log("All services started ...");
 }
 Future<void> main() async {
