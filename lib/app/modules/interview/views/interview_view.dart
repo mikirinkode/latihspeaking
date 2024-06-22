@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:speaking/app/global_widgets/in_chat_loading.dart';
 
 import '../../../core/theme/app_color.dart';
 import '../../playground/views/playground_view.dart';
@@ -75,15 +76,7 @@ class InterviewView extends GetView<InterviewController> {
                   EdgeInsets.only(top: 16, right: 64, left: 0),
                   child: Align(
                     alignment: Alignment.centerLeft,
-                    child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          color: Colors.white),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
-                      child: LoadingAnimationWidget.waveDots(
-                          color: AppColor.PRIMARY_500, size: 24),
-                    ),
+                    child: InChatLoading(),
                   ),
                 )
                     : Container()

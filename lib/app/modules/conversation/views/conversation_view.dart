@@ -7,6 +7,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:speaking/app/global_widgets/button_widget.dart';
 
 import '../../../core/theme/app_color.dart';
+import '../../../global_widgets/loading_indicator.dart';
 import '../controllers/conversation_controller.dart';
 
 class ConversationView extends GetView<ConversationController> {
@@ -69,16 +70,7 @@ class ConversationView extends GetView<ConversationController> {
                               controller.isListening ? Icons.stop : Icons.mic),
                         )),
         body: Obx(() => controller.isLoading.value
-            ? Center(
-                child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      color: Colors.white),
-                  padding: const EdgeInsets.all(16),
-                  child: LoadingAnimationWidget.fourRotatingDots(
-                      color: AppColor.PRIMARY_500, size: 24),
-                ),
-              )
+            ? LoadingIndicator()
             : SingleChildScrollView(
                 reverse: true,
                 child: Container(

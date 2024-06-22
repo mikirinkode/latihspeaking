@@ -4,6 +4,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:speaking/app/global_widgets/in_chat_loading.dart';
 
 import '../../../core/theme/app_color.dart';
 import '../controllers/playground_controller.dart';
@@ -15,7 +16,7 @@ class PlaygroundView extends GetView<PlaygroundController> {
           () => Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: Text(controller.pageTitle.value),
+          title: Text("Chatting Buddy"),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: AvatarGlow(
@@ -75,15 +76,7 @@ class PlaygroundView extends GetView<PlaygroundController> {
                   EdgeInsets.only(top: 16, right: 64, left: 0),
                   child: Align(
                     alignment: Alignment.centerLeft,
-                    child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          color: AppColor.PRIMARY_100),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
-                      child: LoadingAnimationWidget.waveDots(
-                          color: AppColor.PRIMARY_500, size: 24),
-                    ),
+                    child: InChatLoading(),
                   ),
                 )
                     : Container()
@@ -115,17 +108,6 @@ class ChatWidget extends StatelessWidget {
     var isUser = role == "user";
     return (role == "system")
         ? const SizedBox()
-    // Padding(
-    //       padding: const EdgeInsets.only(top: 16.0),
-    //       child: Container(
-    //           decoration: BoxDecoration(
-    //             borderRadius: BorderRadius.circular(16),
-    //             color: Colors.white,
-    //           ),
-    //           padding: const EdgeInsets.all(8.0),
-    //           child: Text(message),
-    //         ),
-    //     )
         : Padding(
       padding: EdgeInsets.only(
           top: 16, right: isUser ? 0 : 16, left: isUser ? 16 : 0),

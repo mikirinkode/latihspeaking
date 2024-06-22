@@ -111,29 +111,6 @@ class InterviewController extends GetxController {
   }
 
   startListening() async {
-    // _tts.stop();
-    // if (!isListening) {
-    //   bool available = await _speech.initialize(
-    //     onStatus: (val) => Get.log("onStatus: $val"),
-    //     onError: (val) => Get.log("onError: $val"),
-    //   );
-    //   if (available) {
-    //     _text.value = "";
-    //     _isListening.value = true;
-    //     _speech.listen(
-    //         onResult: (val) => {
-    //               _text.value = val.recognizedWords,
-    //               // if (val.hasConfidenceRating && val.confidence > 0)
-    //               //   {_confidence.value = val.confidence}
-    //             });
-    //   }
-    // } else {
-    //   _isListening.value = false;
-    //   messages.add(GroqMessage("user", text));
-    //   _speech.stop();
-    //   _getModelResponse();
-    // }
-    // Get.log("startListening() called");
     _text.value = "";
     continueListening();
   }
@@ -173,35 +150,7 @@ class InterviewController extends GetxController {
 
   Future<void> _getModelResponse() async {
     _isGeneratingResponse.value = true;
-    // Get.log("onStatus: _getModelResponse($_text)");
-    // var uri = "https://api.groq.com/openai/v1/chat/completions";
-    // var headers = {
-    //   'Content-Type': "application/json; charset=UTF-8",
-    //   "Authorization": "Bearer ${Constants.GROQ_API_KEY}"
-    // };
-    // var body = jsonEncode(<String, dynamic>{
-    //   "messages": messages.map((element) => element.toJson()).toList(),
-    //   "model": "llama3-70b-8192"
-    // });
-
-    // Get.log("body: $body");
     try {
-      // final apiResponse = await http.post(
-      //   Uri.parse(uri),
-      //   headers: headers,
-      //   body: body,
-      // );
-      // if (apiResponse.statusCode == 200) {
-      //   Get.log("onSuccess::response data: ${apiResponse.body}");
-      //   final groqResponse =
-      //   GroqResponse.fromJson(jsonDecode(apiResponse.body));
-      //   Get.log("groqResponse::${groqResponse.choices.first.message.content}");
-      //
-      //   _text.value = "";
-      //   _isGeneratingResponse.value = false;
-      //   var result = groqResponse.choices.first.message.content;
-      //   _response.value = result;
-
       await Get.find<ApiProvider>()
           .getModelResponse(messages)
           .then((groqResponse) {
@@ -210,14 +159,6 @@ class InterviewController extends GetxController {
         messages.add(GroqMessage("assistant", result));
         _speak(TextUtils.removeAsterisk(result));
       });
-
-      // });
-
-      // } else {
-      //   _isGeneratingResponse.value = false;
-      //   Get.log("onError: $apiResponse");
-      //   Get.log("onError: ${apiResponse.body}");
-      // }
     } catch (e) {
       _isGeneratingResponse.value = false;
       Get.log("error: $e");

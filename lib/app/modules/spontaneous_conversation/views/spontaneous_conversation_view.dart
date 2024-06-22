@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:speaking/app/global_widgets/loading_indicator.dart';
 
 import '../../../core/theme/app_color.dart';
+import '../../../global_widgets/in_chat_loading.dart';
 import '../../conversation/views/conversation_view.dart';
 import '../controllers/spontaneous_conversation_controller.dart';
 
@@ -58,16 +60,7 @@ class SpontaneousConversationView
                           Icon(controller.isListening ? Icons.stop : Icons.mic),
                     )),
         body: Obx(() => controller.isLoading.value
-            ? Center(
-                child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      color: Colors.white),
-                  padding: const EdgeInsets.all(16),
-                  child: LoadingAnimationWidget.fourRotatingDots(
-                      color: AppColor.PRIMARY_500, size: 24),
-                ),
-              )
+            ? LoadingIndicator()
             : SingleChildScrollView(
                 reverse: true,
                 child: Container(
@@ -106,15 +99,7 @@ class SpontaneousConversationView
                                   EdgeInsets.only(top: 16, right: 64, left: 0),
                               child: Align(
                                 alignment: Alignment.centerLeft,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(16),
-                                      color: Colors.white),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 4),
-                                  child: LoadingAnimationWidget.waveDots(
-                                      color: AppColor.PRIMARY_500, size: 24),
-                                ),
+                                child: InChatLoading(),
                               ),
                             )
                           : Container()
