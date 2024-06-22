@@ -59,10 +59,10 @@ class ConversationController extends GetxController {
   }
 
   @override
-  void onClose() {
+  Future<void> onClose() async {
+    await Get.find<SpeechRecognizer>().onClose();
+    await _tts.stop();
     super.onClose();
-    Get.find<SpeechRecognizer>().onClose();
-    _tts.stop();
   }
 
   Future<void> _initVoiceChat() async {

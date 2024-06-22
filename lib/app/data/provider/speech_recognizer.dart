@@ -78,7 +78,9 @@ class SpeechRecognizer extends GetxService {
   Future<void> onClose() async {
     super.onClose();
     _isListening.value = false;
-    await _speech.stop();
-    await _speech.cancel();
+    if (_speech.isListening){
+      await _speech.stop();
+      await _speech.cancel();
+    }
   }
 }
