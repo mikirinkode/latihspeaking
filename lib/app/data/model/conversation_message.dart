@@ -24,4 +24,7 @@ class ConversationMessage {
         'content': content,
         'wordSaidByUser': wordSaidByUser,
       };
+
+  @override
+  String toString() => "Conversation(role: $role, content: $content, wordSaidByUser: $wordSaidByUser)";
 }

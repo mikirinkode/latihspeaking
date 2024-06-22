@@ -64,13 +64,16 @@ class IntroductionView extends GetView<IntroductionController> {
                   child: Column(
                     children: [
                       controller.messages.length <= 1
-                          ? Text(
-                              controller.checkFirstGreeting()
-                                  ? "Tekan kembali tombol mic untuk berhenti bicara"
-                                  : "katakan 'Hi' atau 'Hello' untuk memulai",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 16),
-                            )
+                          ? Padding(
+                            padding: const EdgeInsets.only(top: 16.0, left: 16, right: 16),
+                            child: Text(
+                                controller.checkFirstGreeting()
+                                    ? "Tekan kembali tombol mic untuk berhenti bicara"
+                                    : "katakan 'Hi' atau 'Hello' untuk memulai",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 16),
+                              ),
+                          )
                           : SizedBox(),
                       Column(
                         children:

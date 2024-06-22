@@ -65,13 +65,12 @@ class ApiProvider extends GetxService {
         body: body,
       );
       if (apiResponse.statusCode == 200) {
-        // Get.log("onSuccess::response data: ${apiResponse.body}");
+        Get.log("onSuccess::response data: ${apiResponse.body}");
         final groqResponse =
         GroqResponse.fromJson(jsonDecode(apiResponse.body));
         Get.log("groqResponse::${groqResponse.choices.first.message.content}");
         return groqResponse;
       } else {
-        Get.log("onError: $apiResponse");
         Get.log("onError: ${apiResponse.body}");
       return Future.error("Failed getting response from AI");
       }

@@ -1,9 +1,7 @@
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-
 import 'package:get/get.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:speaking/app/global_widgets/button_widget.dart';
 
 import '../../../core/theme/app_color.dart';
@@ -53,7 +51,7 @@ class ConversationView extends GetView<ConversationController> {
                         child: FloatingActionButton(
                           onPressed: () {
                             if (controller.isSpeakingEnabled.value) {
-                              if(controller.isListening){
+                              if (controller.isListening) {
                                 controller.stopListening();
                               } else {
                                 controller.startListening();
@@ -91,7 +89,7 @@ class ConversationView extends GetView<ConversationController> {
                               textSaidByUser: e.value.wordSaidByUser ?? "",
                               translate: () {});
                         }).toList(),
-                      )
+                      ),
                       // ListView.builder(
                       //   itemCount: controller.conversationMessages.length,
                       //   itemBuilder: (context, index) {
@@ -103,6 +101,90 @@ class ConversationView extends GetView<ConversationController> {
                       //         translate: () {});
                       //   },
                       // ),
+                      controller.feedback.isEmpty
+                          ? Container()
+                          : Padding(
+                              padding: const EdgeInsets.only(top: 16.0),
+                              child: Container(
+                                padding: EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: MarkdownBody(
+                                  data: controller.feedback.value,
+                                ),
+                              ),
+                            ),
+                      // TODO [WIP] : CONTINUE LATER
+                      controller.conversationFeedback.value == null
+                          ? Container()
+                          : Column(
+                            children: [
+                              const SizedBox(height: 16,),
+                              Text("Here is feedback for our conversation: "),
+                              Padding(
+                                  padding: const EdgeInsets.only(top: 16.0),
+                                  child: Container(
+                                      padding: EdgeInsets.all(16),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            padding: EdgeInsets.all(16),
+                                            decoration: BoxDecoration(
+                                                color: AppColor.PRIMARY_50,
+                                                borderRadius:
+                                                    BorderRadius.circular(16),
+                                                border: Border.all(
+                                                    width: 1,
+                                                    color: AppColor.PRIMARY_50)),
+                                            child: Column(
+                                              children: [
+                                                Text(
+                                                  controller.conversationFeedback
+                                                      .value!.overall!.score
+                                                      .toString(),
+                                                  style: TextStyle(
+                                                      color: AppColor.PRIMARY,
+                                                      fontSize: 24,
+                                                      fontWeight: FontWeight.w900),
+                                                ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                                Text("Skor Keseluruhan")
+                                              ],
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 16,
+                                          ),
+                                          const SizedBox(
+                                              width: double.infinity,
+                                              child: Text(
+                                                "Feedback",
+                                                style: TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.bold),
+                                              )),
+                                          const SizedBox(
+                                            height: 8,
+                                          ),
+                                          controller
+                                                  .translatedFeedback.value.isEmpty
+                                              ? SizedBox()
+                                              : MarkdownBody(
+                                                  data: controller
+                                                      .translatedFeedback.value)
+                                        ],
+                                      )),
+                                ),
+                            ],
+                          )
                     ],
                   ),
                 ),
