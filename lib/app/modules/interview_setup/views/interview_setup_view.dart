@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:speaking/app/global_widgets/button_widget.dart';
 
+import '../../../routes/app_pages.dart';
 import '../controllers/interview_setup_controller.dart';
 
 class InterviewSetupView extends GetView<InterviewSetupController> {
@@ -42,11 +43,17 @@ class InterviewSetupView extends GetView<InterviewSetupController> {
                           controller.jobNameInput.value = value ?? "",
                       initialValue: "",
                     ),
-                    const SizedBox(height: 16,),
+                    const SizedBox(
+                      height: 16,
+                    ),
                     PrimaryButton(
                         text: "Mulai",
                         enabled: controller.jobNameInput.value != "",
-                        onPressed: () {})
+                        onPressed: () {
+                          Get.toNamed(Routes.INTERVIEW, arguments: {
+                            "APPLIED_POSITION": controller.jobNameInput.value
+                          });
+                        })
                   ],
                 ),
               ),

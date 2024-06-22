@@ -14,6 +14,7 @@ abstract class Routes {
   static const INTERVIEW_SETUP = _Paths.INTERVIEW_SETUP;
   static const FREE_CONVERSATION = _Paths.FREE_CONVERSATION;
   static const SPONTANEOUS_CONVERSATION = _Paths.SPONTANEOUS_CONVERSATION;
+  static const INTERVIEW = _Paths.INTERVIEW;
 }
 
 abstract class _Paths {
@@ -29,4 +30,5 @@ abstract class _Paths {
   static const INTERVIEW_SETUP = '/interview-setup';
   static const FREE_CONVERSATION = '/free-conversation';
   static const SPONTANEOUS_CONVERSATION = '/spontaneous-conversation';
+  static const INTERVIEW = '/interview';
 }

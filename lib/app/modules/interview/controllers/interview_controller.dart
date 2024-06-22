@@ -1,18 +1,16 @@
-import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get/get.dart';
+import 'package:speaking/app/data/provider/api_provider.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:translator/translator.dart';
 
-import 'package:http/http.dart' as http;
 import '../../../../constants.dart';
 import '../../../data/model/groq_message.dart';
 import '../../../data/model/groq_response.dart';
 import '../../../utils/text_utils.dart';
 
-class PlaygroundController extends GetxController {
+class InterviewController extends GetxController {
   final _isListening = false.obs;
 
   bool get isListening => _isListening.value;
@@ -48,7 +46,7 @@ class PlaygroundController extends GetxController {
   void onInit() {
     super.onInit();
     _initVoiceChat();
-    _initializedAgent(Get.arguments["AI_AGENT"]);
+    _initializedAgent(Get.arguments["APPLIED_POSITION"]);
   }
 
   @override
@@ -103,32 +101,13 @@ class PlaygroundController extends GetxController {
     Get.log("selected voice: ${selectedVoice.value}");
   }
 
-  void _initializedAgent(String agent) {
-    switch (agent) {
-      case Agent.casualChatAgent:
-        pageTitle.value = Agent.casualChatAgent;
-        messages.addAll([
-          GroqMessage("system", SystemPromptTemplate.casualChatAgent),
-          GroqMessage("assistant",
-              "Hey there! I'm here for some casual chatting. So, how was your day? Anything exciting happen recently?")
-        ]);
-        break;
-      case Agent.casualChatAgent:
-        pageTitle.value = Agent.casualChatAgent;
-        messages.addAll([
-          GroqMessage("system", SystemPromptTemplate.casualChatAgent),
-          GroqMessage("assistant",
-              "Hey there! I'm here for some casual chatting. So, how was your day? Anything exciting happen recently?")
-        ]);
-        break;
-
-      default:
-        pageTitle.value = Agent.aiAssistant;
-        messages.addAll([
-          GroqMessage("system", SystemPromptTemplate.aiAssistant),
-          GroqMessage("assistant", "Hello there, how can i help you today?")
-        ]);
-    }
+  void _initializedAgent(String appliedPosition) {
+    messages.addAll([
+      GroqMessage(
+          "system", SystemPromptTemplate.getRecruiterPrompt(appliedPosition)),
+      GroqMessage("assistant",
+          "Hi there! welcome to your Interview Practice. Are you ready to begin your interview?")
+    ]);
   }
 
   startListening() async {
@@ -194,52 +173,51 @@ class PlaygroundController extends GetxController {
 
   Future<void> _getModelResponse() async {
     _isGeneratingResponse.value = true;
-    Get.log("onStatus: _getModelResponse($_text)");
-    var uri = "https://api.groq.com/openai/v1/chat/completions";
-    var headers = {
-      'Content-Type': "application/json; charset=UTF-8",
-      "Authorization": "Bearer ${Constants.GROQ_API_KEY}"
-    };
-    var body = jsonEncode(<String, dynamic>{
-      "messages": messages.map((element) => element.toJson()).toList(),
-      "model": "llama3-70b-8192"
-    });
+    // Get.log("onStatus: _getModelResponse($_text)");
+    // var uri = "https://api.groq.com/openai/v1/chat/completions";
+    // var headers = {
+    //   'Content-Type': "application/json; charset=UTF-8",
+    //   "Authorization": "Bearer ${Constants.GROQ_API_KEY}"
+    // };
+    // var body = jsonEncode(<String, dynamic>{
+    //   "messages": messages.map((element) => element.toJson()).toList(),
+    //   "model": "llama3-70b-8192"
+    // });
 
-    Get.log("body: $body");
+    // Get.log("body: $body");
     try {
-      final apiResponse = await http.post(
-        Uri.parse(uri),
-        headers: headers,
-        body: body,
-      );
-      if (apiResponse.statusCode == 200) {
-        Get.log("onSuccess::response data: ${apiResponse.body}");
-        final groqResponse =
-            GroqResponse.fromJson(jsonDecode(apiResponse.body));
-        Get.log("groqResponse::${groqResponse.choices.first.message.content}");
+      // final apiResponse = await http.post(
+      //   Uri.parse(uri),
+      //   headers: headers,
+      //   body: body,
+      // );
+      // if (apiResponse.statusCode == 200) {
+      //   Get.log("onSuccess::response data: ${apiResponse.body}");
+      //   final groqResponse =
+      //   GroqResponse.fromJson(jsonDecode(apiResponse.body));
+      //   Get.log("groqResponse::${groqResponse.choices.first.message.content}");
+      //
+      //   _text.value = "";
+      //   _isGeneratingResponse.value = false;
+      //   var result = groqResponse.choices.first.message.content;
+      //   _response.value = result;
 
-        _text.value = "";
+      await Get.find<ApiProvider>()
+          .getModelResponse(messages)
+          .then((groqResponse) {
         _isGeneratingResponse.value = false;
         var result = groqResponse.choices.first.message.content;
-        _response.value = result;
+        messages.add(GroqMessage("assistant", result));
+        _speak(TextUtils.removeAsterisk(result));
+      });
 
-        // translate it first
-        // _translator
-        //     .translate(result, from: "en", to: "id")
-        //     .then((value) {
-        //   Get.log("translated message: ${value.text}");
-        //   messages.add(GroqMessage("assistant", response, translation: value.text));
-        // }).onError((error, stackTrace) {
-        //   Get.log("onError::translate message");
-        messages.add(GroqMessage("assistant", response));
-        // });
+      // });
 
-        _speak(TextUtils.removeAsterisk(response));
-      } else {
-        _isGeneratingResponse.value = false;
-        Get.log("onError: $apiResponse");
-        Get.log("onError: ${apiResponse.body}");
-      }
+      // } else {
+      //   _isGeneratingResponse.value = false;
+      //   Get.log("onError: $apiResponse");
+      //   Get.log("onError: ${apiResponse.body}");
+      // }
     } catch (e) {
       _isGeneratingResponse.value = false;
       Get.log("error: $e");

@@ -5,6 +5,8 @@ import 'package:speaking/app/modules/conversation/bindings/conversation_binding.
 import 'package:speaking/app/modules/conversation/views/conversation_view.dart';
 import 'package:speaking/app/modules/embedded_web/bindings/embedded_web_binding.dart';
 import 'package:speaking/app/modules/embedded_web/views/embedded_web_view.dart';
+import 'package:speaking/app/modules/interview/bindings/interview_binding.dart';
+import 'package:speaking/app/modules/interview/views/interview_view.dart';
 import 'package:speaking/app/modules/interview_setup/bindings/interview_setup_binding.dart';
 import 'package:speaking/app/modules/interview_setup/views/interview_setup_view.dart';
 import 'package:speaking/app/modules/introduction/bindings/introduction_binding.dart';
@@ -81,6 +83,11 @@ class AppPages {
       name: _Paths.SPONTANEOUS_CONVERSATION,
       page: () => SpontaneousConversationView(),
       binding: SpontaneousConversationBinding(),
+    ),
+    GetPage(
+      name: _Paths.INTERVIEW,
+      page: () => InterviewView(),
+      binding: InterviewBinding(),
     ),
   ];
 }
