@@ -177,26 +177,6 @@ class ConversationController extends GetxController {
   }
 
   startListening() async {
-    // _tts.stop();
-    // if (!isListening) {
-    //   bool available = await _speech.initialize(
-    //       // onStatus: (val) => Get.log("onStatus: $val"),
-    //       // onError: (val) => Get.log("onError: $val"),
-    //       );
-    //   if (available) {
-    //     Get.log("onStatus: speech start listening");
-    //     _nextMessage();
-    //     _text.value = "";
-    //     _isListening.value = true;
-    //     _speech.listen(
-    //         onResult: (val) => {
-    //               _text.value = val.recognizedWords,
-    //               // if (val.hasConfidenceRating && val.confidence > 0)
-    //               //   {_confidence.value = val.confidence}
-    //             });
-    //   }
-    // } else {}
-    // Get.log("startListening() called");
     _nextMessage();
     _text.value = "";
     continueListening();
@@ -211,9 +191,6 @@ class ConversationController extends GetxController {
           listenOptions: SpeechListenOptions(
               listenMode: ListenMode.dictation, partialResults: (kIsWeb) ? true : false),
           onResult: (val) {
-            Get.log("recognized value: ${val.recognizedWords}");
-            Get.log(
-                "!_text.value.contains(val.recognizedWords): ${!_text.value.contains(val.recognizedWords)}");
             if (kIsWeb){
               _text.value = val.recognizedWords;
             } else {
@@ -239,6 +216,8 @@ class ConversationController extends GetxController {
         wordSaidByUser: text);
     shownMessages[currentFocusedMessage.value] = updatedMessage;
 
+    var conversationMessageJson = shownMessages.map((e) => e.toJson()).toList();
+    Get.log("conversation json: ${conversationMessageJson}");
     // show next message
     shownMessages
         .add(conversationMessages.elementAt(currentFocusedMessage.value + 1));
@@ -273,8 +252,13 @@ class ConversationController extends GetxController {
     if (currentFocusedMessage.value + 1 <= conversationMessages.length - 1) {
       currentFocusedMessage.value = currentFocusedMessage.value + 1;
       Get.log("CurrentMessageIndex changed to: $currentFocusedMessage");
+
+
       if (currentFocusedMessage.value == conversationMessages.length - 1) {
         Get.log("CurrentMessageIndex has reach the last");
+
+        var conversationMessageJson = shownMessages.map((e) => e.toJson()).toList();
+        Get.log("conversation json: ${conversationMessageJson}");
         isConversationOnGoing.value = false;
         isFinished.value = true;
       }

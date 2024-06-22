@@ -10,4 +10,9 @@ class ConversationTheme {
       theme: json['theme'],
     );
   }
+
+  @override
+  toString() {
+    return 'ConversationTheme(emoji: "' + emoji + '", theme: "' + theme +'")';
+  }
 }

@@ -22,5 +22,6 @@ class ConversationMessage {
   Map<String, dynamic> toJson() => {
         'role': role,
         'content': content,
+        'wordSaidByUser': wordSaidByUser,
       };
 }

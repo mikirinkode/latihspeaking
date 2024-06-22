@@ -9,4 +9,12 @@ class GroqMessage {
     'role': role,
     'content': content,
   };
+
+  factory GroqMessage.fromJson(Map<String, dynamic> json) {
+    return GroqMessage(
+       json['role'],
+      json['content'],
+      translation: null,
+    );
+  }
 }

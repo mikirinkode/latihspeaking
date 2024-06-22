@@ -79,6 +79,7 @@ class HomeView extends GetView<HomeController> {
                 icon: "👋",
                 title: "Perkenalan",
                 desc: "Panduan singkat menggunakan aplikasi",
+                tags: ["Mudah"],
                 onTap: () {
                   Get.toNamed(Routes.INTRODUCTION);
                 },
@@ -86,28 +87,38 @@ class HomeView extends GetView<HomeController> {
               const Padding(
                 padding: EdgeInsets.only(top: 24.0, left: 16),
                 child: Text(
-                  "Latihan",
+                  "Latihan umum",
                   style: TextStyle(fontSize: 18),
                 ),
               ),
               PracticeCard(
                 icon: "💬",
-                title: "Conversational Practice",
+                title: "Obrolan Terarah",
                 desc:
-                    "Simulasi ngobrol dengan tema seperti pergi nonton ke bioskop atau ke restoran",
+                    "Simulasi percakapan dengan skenario tertentu seperti pergi ke bioskop atau restoran. Cocok untuk latihan dengan panduan jawaban yang sudah disediakan.",
+                tags: ["mudah"],
                 onTap: () {
-                  Get.toNamed(Routes.SELECT_CONVERSATION);
-                  // Get.toNamed(Routes.PLAYGROUND, arguments: {
-                  //   "VOICE_MODEL": "Female",
-                  //   "AI_AGENT": Agent.conversationalPracticeAgent
-                  // });
+                  Get.toNamed(Routes.SELECT_CONVERSATION,
+                      arguments: {"CONVERSATION_TYPE": "DIRECTED"});
                 },
               ),
               PracticeCard(
-                icon: "👤",
-                title: "Free talk (Uji Coba)",
+                icon: "⚡",
+                title: "Obrolan Spontan",
                 desc:
-                    "Ngobrol sesuka kamu, ekspresikan diri dan latih speaking mu!",
+                    "Tingkatkan kemampuan berbicara dengan tantangan spontan. Tentukan jawabanmu sendiri dalam berbagai situasi percakapan tanpa panduan",
+                tags: ["menengah"],
+                onTap: () {
+                  Get.toNamed(Routes.SELECT_CONVERSATION,
+                      arguments: {"CONVERSATION_TYPE": "SPONTAN"});
+                },
+              ),
+              PracticeCard(
+                icon: "🎤",
+                title: "Obrolan bebas (Uji Coba)",
+                desc:
+                    "Ngobrol sesuka kamu dan ekspresikan diri tanpa batasan tema. Latih kemampuan berbicara secara alami dan spontan!",
+                tags: ["menengah"],
                 onTap: () {
                   Get.toNamed(Routes.PLAYGROUND, arguments: {
                     "VOICE_MODEL": "Female",
@@ -115,29 +126,46 @@ class HomeView extends GetView<HomeController> {
                   });
                 },
               ),
+              const Padding(
+                padding: EdgeInsets.only(top: 24.0, left: 16),
+                child: Text(
+                  "Persiapan karir",
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
               PracticeCard(
-                icon: "🔁",
-                title: "Repeat after me (Uji Coba)",
+                icon: "💼",
+                title: "Mock Interview",
                 desc:
-                    "AI Buddy akan mengucapkan sebuah kalimat. Kamu bisa mengulanginya untuk melatih intonasi dan pelafalan.",
+                    "Perkuat keterampilan berbicaramu dan persiapkan dirimu untuk sukses dalam karir dengan latihan wawancara yang realistis.",
+                tags: ["menengah"],
                 onTap: () {
-                  Get.toNamed(Routes.PLAYGROUND, arguments: {
-                    "VOICE_MODEL": "Female",
-                    "AI_AGENT": Agent.repeatAfterMeAgent
-                  });
+                  Get.toNamed(Routes.INTERVIEW_SETUP);
                 },
               ),
-              PracticeCard(
-                icon: "🔊",
-                title: "Pronunciation Practice  (Uji Coba)",
-                desc: "Fokus berlatih pengucapan kata kata yang tricky",
-                onTap: () {
-                  Get.toNamed(Routes.PLAYGROUND, arguments: {
-                    "VOICE_MODEL": "Female",
-                    "AI_AGENT": Agent.pronunciationPracticeAgent
-                  });
-                },
-              ),
+              // PracticeCard(
+              //   icon: "🔁",
+              //   title: "Repeat after me (Uji Coba)",
+              //   desc:
+              //       "AI Buddy akan mengucapkan sebuah kalimat. Kamu bisa mengulanginya untuk melatih intonasi dan pelafalan.",
+              //   onTap: () {
+              //     Get.toNamed(Routes.PLAYGROUND, arguments: {
+              //       "VOICE_MODEL": "Female",
+              //       "AI_AGENT": Agent.repeatAfterMeAgent
+              //     });
+              //   },
+              // ),
+              // PracticeCard(
+              //   icon: "🔊",
+              //   title: "Pronunciation Practice  (Uji Coba)",
+              //   desc: "Fokus berlatih pengucapan kata kata yang tricky",
+              //   onTap: () {
+              //     Get.toNamed(Routes.PLAYGROUND, arguments: {
+              //       "VOICE_MODEL": "Female",
+              //       "AI_AGENT": Agent.pronunciationPracticeAgent
+              //     });
+              //   },
+              // ),
               // const SizedBox(
               //   height: 24,
               // ),
@@ -208,16 +236,18 @@ class HomeView extends GetView<HomeController> {
                           height: 8,
                         ),
                         SecondaryButton(
-                            text: "Kirim Feedback", onPressed: () {
-                          if (kIsWeb) {
-                            launchUrl(
-                              Uri.parse("https://forms.gle/bxRNgavRcVwxCdo67"),
-                              mode: LaunchMode.externalApplication,
-                            );
-                          } else {
-                            Get.toNamed(Routes.EMBEDDED_WEB);
-                          }
-                        })
+                            text: "Kirim Feedback",
+                            onPressed: () {
+                              if (kIsWeb) {
+                                launchUrl(
+                                  Uri.parse(
+                                      "https://forms.gle/bxRNgavRcVwxCdo67"),
+                                  mode: LaunchMode.externalApplication,
+                                );
+                              } else {
+                                Get.toNamed(Routes.EMBEDDED_WEB);
+                              }
+                            })
                       ],
                     ),
                   ))
@@ -233,12 +263,14 @@ class PracticeCard extends StatelessWidget {
   final icon;
   final title;
   final desc;
+  final List<String> tags;
   final Function() onTap;
 
   const PracticeCard(
       {required this.icon,
       required this.title,
       required this.desc,
+      required this.tags,
       required this.onTap,
       super.key});
 

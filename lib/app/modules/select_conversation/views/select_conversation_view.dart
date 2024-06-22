@@ -37,8 +37,13 @@ class SelectConversationView extends GetView<SelectConversationController> {
                   emoji: e.emoji,
                   theme: e.theme,
                   onTap: () {
-                    Get.toNamed(Routes.CONVERSATION,
-                        arguments: {"CONVERSATION_THEME": e.theme});
+                    if (controller.conversationType.value == "DIRECTED"){
+                      Get.toNamed(Routes.CONVERSATION,
+                          arguments: {"CONVERSATION_THEME": e.theme});
+                    } else {
+                      Get.toNamed(Routes.SPONTANEOUS_CONVERSATION,
+                          arguments: {"CONVERSATION_THEME": e.theme});
+                    }
                   },
                 );
               },

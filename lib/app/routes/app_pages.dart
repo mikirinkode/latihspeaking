@@ -5,6 +5,8 @@ import 'package:speaking/app/modules/conversation/bindings/conversation_binding.
 import 'package:speaking/app/modules/conversation/views/conversation_view.dart';
 import 'package:speaking/app/modules/embedded_web/bindings/embedded_web_binding.dart';
 import 'package:speaking/app/modules/embedded_web/views/embedded_web_view.dart';
+import 'package:speaking/app/modules/interview_setup/bindings/interview_setup_binding.dart';
+import 'package:speaking/app/modules/interview_setup/views/interview_setup_view.dart';
 import 'package:speaking/app/modules/introduction/bindings/introduction_binding.dart';
 import 'package:speaking/app/modules/introduction/views/introduction_view.dart';
 import 'package:speaking/app/modules/login/bindings/login_binding.dart';
@@ -15,6 +17,8 @@ import 'package:speaking/app/modules/proficiency/bindings/proficiency_binding.da
 import 'package:speaking/app/modules/proficiency/views/proficiency_view.dart';
 import 'package:speaking/app/modules/select_conversation/bindings/select_conversation_binding.dart';
 import 'package:speaking/app/modules/select_conversation/views/select_conversation_view.dart';
+import 'package:speaking/app/modules/spontaneous_conversation/bindings/spontaneous_conversation_binding.dart';
+import 'package:speaking/app/modules/spontaneous_conversation/views/spontaneous_conversation_view.dart';
 
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
@@ -67,6 +71,16 @@ class AppPages {
       name: _Paths.EMBEDDED_WEB,
       page: () => EmbeddedWebView(),
       binding: EmbeddedWebBinding(),
+    ),
+    GetPage(
+      name: _Paths.INTERVIEW_SETUP,
+      page: () => InterviewSetupView(),
+      binding: InterviewSetupBinding(),
+    ),
+    GetPage(
+      name: _Paths.SPONTANEOUS_CONVERSATION,
+      page: () => SpontaneousConversationView(),
+      binding: SpontaneousConversationBinding(),
     ),
   ];
 }

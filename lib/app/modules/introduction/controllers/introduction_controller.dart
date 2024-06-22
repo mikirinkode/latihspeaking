@@ -114,7 +114,7 @@ class IntroductionController extends GetxController {
         _response.value = result;
         messages.add(GroqMessage("assistant", response));
         _speak(TextUtils.removeAsterisk(response));
-        if (result.contains("INTRODUCTION COMPLETED") || messages.length >= 8){
+        if (result.contains("INTRODUCTION COMPLETED")){
           isFinished.value = true;
         }
       }).onError((error, stackTrace) {
@@ -142,9 +142,9 @@ class IntroductionController extends GetxController {
           listenOptions: SpeechListenOptions(
               listenMode: ListenMode.dictation, partialResults: (kIsWeb) ? true : false),
           onResult: (val) {
-            Get.log("recognized value: ${val.recognizedWords}");
-            Get.log(
-                "!_text.value.contains(val.recognizedWords): ${!_text.value.contains(val.recognizedWords)}");
+            // Get.log("recognized value: ${val.recognizedWords}");
+            // Get.log(
+            //     "!_text.value.contains(val.recognizedWords): ${!_text.value.contains(val.recognizedWords)}");
             if (messages.length <= 1) {
               // first message should be hi or hello
               if (val.recognizedWords.toLowerCase() == "hi") {
