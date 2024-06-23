@@ -1,5 +1,6 @@
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -102,7 +103,22 @@ class SpontaneousConversationView
                                 child: InChatLoading(),
                               ),
                             )
-                          : Container()
+                          : Container(),
+                      controller.feedback.isEmpty
+                          ? Container()
+                          : Padding(
+                        padding: const EdgeInsets.only(top: 16.0),
+                        child: Container(
+                          padding: EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: MarkdownBody(
+                            data: controller.feedback.value,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),

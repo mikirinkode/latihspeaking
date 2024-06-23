@@ -17,4 +17,8 @@ class GroqMessage {
       translation: null,
     );
   }
+
+  @override
+  String toString() => "Conversation(role: $role, content: $content)";
+
 }

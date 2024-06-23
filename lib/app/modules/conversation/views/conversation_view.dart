@@ -117,74 +117,74 @@ class ConversationView extends GetView<ConversationController> {
                               ),
                             ),
                       // TODO [WIP] : CONTINUE LATER
-                      controller.conversationFeedback.value == null
-                          ? Container()
-                          : Column(
-                            children: [
-                              const SizedBox(height: 16,),
-                              Text("Here is feedback for our conversation: "),
-                              Padding(
-                                  padding: const EdgeInsets.only(top: 16.0),
-                                  child: Container(
-                                      padding: EdgeInsets.all(16),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(16),
-                                      ),
-                                      child: Column(
-                                        children: [
-                                          Container(
-                                            padding: EdgeInsets.all(16),
-                                            decoration: BoxDecoration(
-                                                color: AppColor.PRIMARY_50,
-                                                borderRadius:
-                                                    BorderRadius.circular(16),
-                                                border: Border.all(
-                                                    width: 1,
-                                                    color: AppColor.PRIMARY_50)),
-                                            child: Column(
-                                              children: [
-                                                Text(
-                                                  controller.conversationFeedback
-                                                      .value!.overall!.score
-                                                      .toString(),
-                                                  style: TextStyle(
-                                                      color: AppColor.PRIMARY,
-                                                      fontSize: 24,
-                                                      fontWeight: FontWeight.w900),
-                                                ),
-                                                const SizedBox(
-                                                  height: 8,
-                                                ),
-                                                Text("Skor Keseluruhan")
-                                              ],
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            height: 16,
-                                          ),
-                                          const SizedBox(
-                                              width: double.infinity,
-                                              child: Text(
-                                                "Feedback",
-                                                style: TextStyle(
-                                                    fontSize: 18,
-                                                    fontWeight: FontWeight.bold),
-                                              )),
-                                          const SizedBox(
-                                            height: 8,
-                                          ),
-                                          controller
-                                                  .translatedFeedback.value.isEmpty
-                                              ? SizedBox()
-                                              : MarkdownBody(
-                                                  data: controller
-                                                      .translatedFeedback.value)
-                                        ],
-                                      )),
-                                ),
-                            ],
-                          )
+                      // controller.conversationFeedback.value == null
+                      //     ? Container()
+                      //     : Column(
+                      //       children: [
+                      //         const SizedBox(height: 16,),
+                      //         Text("Here is feedback for our conversation: "),
+                      //         Padding(
+                      //             padding: const EdgeInsets.only(top: 16.0),
+                      //             child: Container(
+                      //                 padding: EdgeInsets.all(16),
+                      //                 decoration: BoxDecoration(
+                      //                   color: Colors.white,
+                      //                   borderRadius: BorderRadius.circular(16),
+                      //                 ),
+                      //                 child: Column(
+                      //                   children: [
+                      //                     Container(
+                      //                       padding: EdgeInsets.all(16),
+                      //                       decoration: BoxDecoration(
+                      //                           color: AppColor.PRIMARY_50,
+                      //                           borderRadius:
+                      //                               BorderRadius.circular(16),
+                      //                           border: Border.all(
+                      //                               width: 1,
+                      //                               color: AppColor.PRIMARY_50)),
+                      //                       child: Column(
+                      //                         children: [
+                      //                           Text(
+                      //                             controller.conversationFeedback
+                      //                                 .value!.overall!.score
+                      //                                 .toString(),
+                      //                             style: TextStyle(
+                      //                                 color: AppColor.PRIMARY,
+                      //                                 fontSize: 24,
+                      //                                 fontWeight: FontWeight.w900),
+                      //                           ),
+                      //                           const SizedBox(
+                      //                             height: 8,
+                      //                           ),
+                      //                           Text("Skor Keseluruhan")
+                      //                         ],
+                      //                       ),
+                      //                     ),
+                      //                     const SizedBox(
+                      //                       height: 16,
+                      //                     ),
+                      //                     const SizedBox(
+                      //                         width: double.infinity,
+                      //                         child: Text(
+                      //                           "Feedback",
+                      //                           style: TextStyle(
+                      //                               fontSize: 18,
+                      //                               fontWeight: FontWeight.bold),
+                      //                         )),
+                      //                     const SizedBox(
+                      //                       height: 8,
+                      //                     ),
+                      //                     controller
+                      //                             .translatedFeedback.value.isEmpty
+                      //                         ? SizedBox()
+                      //                         : MarkdownBody(
+                      //                             data: controller
+                      //                                 .translatedFeedback.value)
+                      //                   ],
+                      //                 )),
+                      //           ),
+                      //       ],
+                      //     )
                     ],
                   ),
                 ),
