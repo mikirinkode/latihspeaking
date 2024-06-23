@@ -13,7 +13,7 @@ class PlaygroundView extends GetView<PlaygroundController> {
   @override
   Widget build(BuildContext context) {
     return Obx(
-          () => Scaffold(
+      () => Scaffold(
         appBar: AppBar(
           centerTitle: true,
           title: Text("Chatting Buddy"),
@@ -38,57 +38,56 @@ class PlaygroundView extends GetView<PlaygroundController> {
             )),
         body: controller.messages.isEmpty && !controller.isListening
             ? Center(
-          child: Text(controller.text,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w400),
-              textAlign: TextAlign.center),
-        )
+                child: Text(controller.text,
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.w400),
+                    textAlign: TextAlign.center),
+              )
             : SingleChildScrollView(
-          reverse: true,
-          child: Container(
-            padding: const EdgeInsets.fromLTRB(16.0, 0, 16, 150.0),
-            child: Column(
-              children: [
-                Column(
-                  children:
-                  controller.messages.asMap().entries.map((entry) {
-                    var isUser = entry.value.role == "user";
-                    return ChatWidget(
-                      message: entry.value.content ?? "",
-                      role: entry.value.role,
-                      translatedMessage: entry.value.translation ?? "",
-                      translate: () {
-                        controller.getTranslation(entry.value, entry.key);
-                      },
-                    );
-                  }).toList(),
-                ),
-                controller.isListening
-                    ? ChatWidget(
-                  role: "user",
-                  message: controller.text,
-                  translatedMessage: "",
-                  translate: () {},
-                )
-                    : Container(),
-                controller.isGeneratingResponse
-                    ? Padding(
-                  padding:
-                  EdgeInsets.only(top: 16, right: 64, left: 0),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: InChatLoading(),
+                reverse: true,
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(16.0, 0, 16, 150.0),
+                  child: Column(
+                    children: [
+                      Column(
+                        children:
+                            controller.messages.asMap().entries.map((entry) {
+                          var isUser = entry.value.role == "user";
+                          return ChatWidget(
+                            message: entry.value.content ?? "",
+                            role: entry.value.role,
+                            translatedMessage: entry.value.translation ?? "",
+                            translate: () {
+                              controller.getTranslation(entry.value, entry.key);
+                            },
+                          );
+                        }).toList(),
+                      ),
+                      controller.isListening
+                          ? ChatWidget(
+                              role: "user",
+                              message: controller.text,
+                              translatedMessage: "",
+                              translate: () {},
+                            )
+                          : Container(),
+                      controller.isGeneratingResponse
+                          ? Padding(
+                              padding:
+                                  EdgeInsets.only(top: 16, right: 64, left: 0),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: InChatLoading(),
+                              ),
+                            )
+                          : Container()
+                    ],
                   ),
-                )
-                    : Container()
-              ],
-            ),
-          ),
-        ),
+                ),
+              ),
       ),
     );
   }
 }
-
 
 class ChatWidget extends StatelessWidget {
   final String message;
@@ -98,10 +97,10 @@ class ChatWidget extends StatelessWidget {
 
   const ChatWidget(
       {required this.message,
-        required this.role,
-        required this.translatedMessage,
-        required this.translate,
-        super.key});
+      required this.role,
+      required this.translatedMessage,
+      required this.translate,
+      super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -109,62 +108,75 @@ class ChatWidget extends StatelessWidget {
     return (role == "system")
         ? const SizedBox()
         : Padding(
-      padding: EdgeInsets.only(
-          top: 16, right: isUser ? 0 : 16, left: isUser ? 16 : 0),
-      child: Align(
-        alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-        child: Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                color:
-                isUser ? AppColor.PRIMARY : Colors.white),
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                MarkdownBody(
-                  data: message,
-                  styleSheet: MarkdownStyleSheet(
-                      p: TextStyle(
-                          color: isUser ? Colors.white : Colors.black,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400)),
-                ),
-                isUser
-                    ? const SizedBox()
-                    : Row(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    IconButton(
-                        onPressed: () {
-                          translate();
-                        },
-                        icon: const Icon(
-                          Icons.translate,
-                          size: 16,
-                        )),
-                    translatedMessage.isEmpty
-                        ? const SizedBox()
-                        : Flexible(
-                      child: Padding(
-                        padding:
-                        const EdgeInsets.only(top: 8.0),
-                        child: MarkdownBody(
-                            data: translatedMessage,
-                            styleSheet: MarkdownStyleSheet(
-                              p: const TextStyle(
-                                fontSize: 14,
-                              ),
-                            )),
+            padding: EdgeInsets.only(
+                top: 16, right: isUser ? 0 : 16, left: isUser ? 16 : 0),
+            child: Align(
+              alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+              child: Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      color: isUser ? AppColor.PRIMARY : Colors.white),
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      MarkdownBody(
+                        data: message,
+                        styleSheet: MarkdownStyleSheet(
+                            p: TextStyle(
+                                color: isUser ? Colors.white : Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400)),
                       ),
-                    )
-                  ],
-                ),
-              ],
+                      isUser
+                          ? const SizedBox()
+                          : TranslationSection(
+                              translatedMessage: translatedMessage,
+                              translate: translate,
+                            ),
+                    ],
+                  )),
+            ),
+          );
+  }
+}
+
+class TranslationSection extends StatelessWidget {
+  final String translatedMessage;
+  final Function() translate;
+
+  const TranslationSection(
+      {required this.translatedMessage, required this.translate, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        IconButton(
+            onPressed: () {
+              translate();
+            },
+            icon: const Icon(
+              Icons.translate,
+              size: 16,
             )),
-      ),
+        translatedMessage.isEmpty
+            ? const SizedBox()
+            : Flexible(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: MarkdownBody(
+                    data: translatedMessage,
+                    styleSheet: MarkdownStyleSheet(
+                      p: const TextStyle(
+                        fontSize: 14,
+                      ),
+                    )),
+              ),
+            )
+      ],
     );
   }
 }

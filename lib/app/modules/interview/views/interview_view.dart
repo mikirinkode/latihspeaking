@@ -8,6 +8,7 @@ import 'package:speaking/app/global_widgets/in_chat_loading.dart';
 
 import '../../../core/theme/app_color.dart';
 import '../../playground/views/playground_view.dart';
+import '../../spontaneous_conversation/views/spontaneous_conversation_view.dart';
 import '../controllers/interview_controller.dart';
 
 class InterviewView extends GetView<InterviewController> {
@@ -93,19 +94,12 @@ class InterviewView extends GetView<InterviewController> {
                           : Container(),
                       controller.feedback.isEmpty
                           ? Container()
-                          : Padding(
-                              padding: const EdgeInsets.only(top: 16.0),
-                              child: Container(
-                                padding: EdgeInsets.all(16),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: MarkdownBody(
-                                  data: controller.feedback.value,
-                                ),
-                              ),
-                            ),
+                          : ConversationFeedbackCard(
+                          feedback: controller.feedback.value,
+                          translatedFeedback: controller.translatedFeedback.value,
+                          translateFeedback: (){
+                            controller.translatedFeedback();
+                          })
                     ],
                   ),
                 ),

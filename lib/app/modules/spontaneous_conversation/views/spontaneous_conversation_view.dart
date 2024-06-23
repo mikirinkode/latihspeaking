@@ -5,6 +5,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:speaking/app/global_widgets/loading_indicator.dart';
+import 'package:speaking/app/modules/playground/views/playground_view.dart';
 
 import '../../../core/theme/app_color.dart';
 import '../../../global_widgets/in_chat_loading.dart';
@@ -73,24 +74,28 @@ class SpontaneousConversationView
                             .asMap()
                             .entries
                             .map((e) {
-                          return ThemedChatWidget(
+                          return ChatWidget(
                               message: e.value.content,
                               role: e.value.role,
                               translatedMessage: e.value.translation ?? "",
-                              isFocusedMessage: false,
-                              currentSaidText: controller.text,
-                              textSaidByUser: "",
-                              translate: () {});
+                              translate: () {
+                                controller.getTranslation(e.value, e.key);
+                              });
+                          // ThemedChatWidget(
+                          //   message: e.value.content,
+                          //   role: e.value.role,
+                          //   translatedMessage: e.value.translation ?? "",
+                          //   isFocusedMessage: false,
+                          //   currentSaidText: controller.text,
+                          //   textSaidByUser: "",
+                          //   translate: () {});
                         }).toList(),
                       ),
                       controller.isListening
-                          ? ThemedChatWidget(
+                          ? ChatWidget(
                               role: "user",
                               message: controller.text,
                               translatedMessage: "",
-                              isFocusedMessage: false,
-                              currentSaidText: controller.text,
-                              textSaidByUser: "",
                               translate: () {},
                             )
                           : Container(),
@@ -106,23 +111,54 @@ class SpontaneousConversationView
                           : Container(),
                       controller.feedback.isEmpty
                           ? Container()
-                          : Padding(
-                        padding: const EdgeInsets.only(top: 16.0),
-                        child: Container(
-                          padding: EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: MarkdownBody(
-                            data: controller.feedback.value,
-                          ),
-                        ),
-                      ),
+                          : ConversationFeedbackCard(
+                          feedback: controller.feedback.value,
+                          translatedFeedback: controller.translatedFeedback.value,
+                          translateFeedback: (){
+                            controller.translatedFeedback();
+                          })
                     ],
                   ),
                 ),
               )),
+      ),
+    );
+  }
+}
+
+class ConversationFeedbackCard extends StatelessWidget {
+  final String feedback;
+  final String translatedFeedback;
+  final Function() translateFeedback;
+
+  const ConversationFeedbackCard(
+      {required this.feedback,
+      required this.translatedFeedback,
+      required this.translateFeedback,
+      super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 16.0),
+      child: Container(
+        padding: EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          children: [
+            MarkdownBody(
+              data: feedback,
+            ),
+            TranslationSection(
+                translatedMessage: translatedFeedback,
+                translate: () {
+                  translateFeedback();
+                })
+          ],
+        ),
       ),
     );
   }

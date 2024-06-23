@@ -73,3 +73,50 @@ class SecondaryButton extends StatelessWidget {
     );
   }
 }
+
+class SecondaryButtonWithIcon extends StatelessWidget {
+  final String text;
+  final IconData icon;
+  final Function() onPressed;
+
+  const SecondaryButtonWithIcon({
+    Key? key,
+    required this.text,
+    required this.icon,
+    required this.onPressed,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton(
+      onPressed: onPressed,
+      style: TextButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+          side: const BorderSide(
+            color: AppColor.NEUTRAL_700,
+          ),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 0.0),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon,
+              size: 16,),
+            const SizedBox(width: 8,),
+            Text(
+              text,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: AppColor.NEUTRAL_700,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

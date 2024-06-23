@@ -38,6 +38,7 @@ class InterviewController extends GetxController {
   final messages = <GroqMessage>[].obs;
   final selectedVoice = "".obs;
   final feedback = "".obs;
+  final translatedFeedback = "".obs;
 
   final pageTitle = "Playground".obs;
 
@@ -199,5 +200,18 @@ class InterviewController extends GetxController {
       var result = groqResponse.choices.first.message.content;
       feedback.value = result;
     });
+  }
+
+  translateFeedback() {
+    if (feedback.value.isNotEmpty || translatedFeedback.value.isEmpty) {
+      _translator
+          .translate(feedback.value, from: "en", to: "id")
+          .then((value) {
+        Get.log("translated message: ${value.text}");
+        translatedFeedback.value = value.text;
+      });
+    } else {
+      Get.log("onGetTranslation info: there already translation or its empty");
+    }
   }
 }

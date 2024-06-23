@@ -45,6 +45,7 @@ class SpontaneousConversationController extends GetxController {
   final selectedVoice = "".obs;
 
   final feedback = "".obs;
+  final translatedFeedback = "".obs;
 
   final _conversationLimit = 10; // NOTE: CHANGE THE LIMIT HERE, should even number
 
@@ -248,5 +249,33 @@ userMessage : ${lastMessage.content}
       // });
       // }
     });
+  }
+
+  void getTranslation(GroqMessage groqMessage, int key) {
+    if (groqMessage.translation == null) {
+      _translator
+          .translate(groqMessage.content, from: "en", to: "id")
+          .then((value) {
+        Get.log("translated message: ${value.text}");
+        GroqMessage updatedMessage = GroqMessage(
+            groqMessage.role, groqMessage.content,
+            translation: value.text);
+        conversationMessages[key] = updatedMessage;
+      });
+    } else {
+      Get.log("onGetTranslation info: there already translation");
+    }
+  }
+  translateFeedback() {
+    if (feedback.value.isNotEmpty || translatedFeedback.value.isEmpty) {
+      _translator
+          .translate(feedback.value, from: "en", to: "id")
+          .then((value) {
+        Get.log("translated message: ${value.text}");
+        translatedFeedback.value = value.text;
+      });
+    } else {
+      Get.log("onGetTranslation info: there already translation or its empty");
+    }
   }
 }

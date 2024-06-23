@@ -13,6 +13,11 @@ class ApiProvider extends GetxService {
     return this;
   }
 
+  /// handle on error
+  /// ClientException: XMLHttpRequest error., uri=https://api.groq.com/openai/v1/chat/completions
+  /// rate limit bla bla
+  /// add to firestore
+  /// display on top of app
   Future<GroqResponse> getModelResponse(List<GroqMessage> messages)async{
     var uri = "https://api.groq.com/openai/v1/chat/completions";
     var headers = {
