@@ -179,13 +179,14 @@ class ConversationController extends GetxController {
       _isListening.value = true;
       Get.find<SpeechRecognizer>().continueListening(
           onResultCallback: (String val) {
-        if (kIsWeb) {
-          _text.value = val;
-        } else {
-          if (!_text.value.contains(val)) {
-            _text.value = "${_text.value} ${val}";
-          }
-        }
+            _text.value = val;
+            // if (kIsWeb) {
+            //   _text.value = val;
+            // } else {
+            //   if (!_text.value.contains(val)) {
+            //     _text.value = "${_text.value} ${val}";
+            //   }
+            // }
       });
     }
   }

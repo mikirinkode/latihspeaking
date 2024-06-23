@@ -110,14 +110,14 @@ class InterviewController extends GetxController {
             Get.log("recognized value: ${val}");
             Get.log(
                 "!_text.value.contains(val.recognizedWords): ${!_text.value.contains(val)}");
-
-            if (kIsWeb) {
-              _text.value = val;
-            } else {
-              if (!_text.value.contains(val)) {
-                _text.value = "${_text.value} ${val}";
-              }
-            }
+            _text.value = val;
+            // if (kIsWeb) {
+            //   _text.value = val;
+            // } else {
+            //   if (!_text.value.contains(val)) {
+            //     _text.value = "${_text.value} ${val}";
+            //   }
+            // }
           });
     }
   }

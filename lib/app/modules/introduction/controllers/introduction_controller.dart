@@ -126,14 +126,14 @@ class IntroductionController extends GetxController {
             _text.value = "hello";
           }
         } else {
-          if (kIsWeb) {
-            _text.value = val;
-          } else {
-            _text.value = val;
-            // if (!_text.value.contains(val)) {
-            //   _text.value = "${_text.value} ${val}";
-            // }
-          }
+          _text.value = val;
+          // if (kIsWeb) {
+          //   _text.value = val;
+          // } else {
+          //   if (!_text.value.contains(val)) {
+          //     _text.value = "${_text.value} ${val}";
+          //   }
+          // }
         }
       });
     }

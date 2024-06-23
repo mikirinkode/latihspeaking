@@ -66,8 +66,7 @@ class PlaygroundController extends GetxController {
     _tts = FlutterTts();
     _translator = GoogleTranslator();
 
-    _isSpeechRecognizerEnabled.value =
-        Get.find<SpeechRecognizer>().isEnabled;
+    _isSpeechRecognizerEnabled.value = Get.find<SpeechRecognizer>().isEnabled;
 
     if (selectedVoice.value == "Male") {
       _tts.setVoice({"name": "Google UK English Male", "locale": "en-GB"});
@@ -101,18 +100,19 @@ class PlaygroundController extends GetxController {
       _isListening.value = true;
       Get.find<SpeechRecognizer>().continueListening(
           onResultCallback: (String val) {
-            Get.log("recognized value: ${val}");
-            Get.log(
-                "!_text.value.contains(val.recognizedWords): ${!_text.value.contains(val)}");
+        Get.log("recognized value: ${val}");
+        Get.log(
+            "!_text.value.contains(val.recognizedWords): ${!_text.value.contains(val)}");
 
-            if (kIsWeb) {
-              _text.value = val;
-            } else {
-              if (!_text.value.contains(val)) {
-                _text.value = "${_text.value} ${val}";
-              }
-            }
-          });
+        _text.value = val;
+        // if (kIsWeb) {
+        //   _text.value = val;
+        // } else {
+        //   if (!_text.value.contains(val)) {
+        //     _text.value = "${_text.value} ${val}";
+        //   }
+        // }
+      });
     }
   }
 
