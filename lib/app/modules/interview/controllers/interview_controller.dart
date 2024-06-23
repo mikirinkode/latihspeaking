@@ -16,6 +16,8 @@ class InterviewController extends GetxController {
 
   bool get isListening => _isListening.value;
 
+  final isFinished = false.obs;
+
   final _isSpeechRecognizerEnabled = false.obs;
 
   final _isGeneratingResponse = false.obs;
@@ -35,6 +37,7 @@ class InterviewController extends GetxController {
 
   final messages = <GroqMessage>[].obs;
   final selectedVoice = "".obs;
+  final feedback = "".obs;
 
   final pageTitle = "Playground".obs;
 
@@ -136,6 +139,10 @@ class InterviewController extends GetxController {
         var result = groqResponse.choices.first.message.content;
         messages.add(GroqMessage("assistant", result));
         _speak(TextUtils.removeAsterisk(result));
+        if (result.contains("[INTERVIEW ENDED]")){
+          isFinished.value = true;
+          _getFeedback();
+        }
       });
     } catch (e) {
       _isGeneratingResponse.value = false;
@@ -173,5 +180,24 @@ class InterviewController extends GetxController {
     } else {
       Get.log("onGetTranslation info: there already translation");
     }
+  }
+
+  Future<void> _getFeedback() async {
+    List<String> conversationMessageJson =
+    messages.map((e) => e.toString()).toList();
+    Get.log("conversation json: ${conversationMessageJson}");
+    // var x =
+    //     "[Conversation(role: assistant, content: Have you ever considered visiting Bali, Indonesia? It's a beautiful island with stunning beaches and temples., wordSaidByUser: null), Conversation(role: user, content: Yes, I've always wanted to go there. I've heard the beaches are amazing., wordSaidByUser: yes I have always wanted to go there I have heard that the beaches are amazing), Conversation(role: assistant, content: They definitely are! Kuta, Seminyak, and Nusa Dua are some of the most popular beaches. Which one would you like to visit first?, wordSaidByUser: null), Conversation(role: user, content: I think I'd like to visit Kuta. I've heard it's a great place for surfers., wordSaidByUser: I think I like to visit Kota I have her it is a great place for soft first), Conversation(role: assistant, content: That's right! Kuta is known for its great surfing spots. Are you planning to try surfing while you're there or just relax on the beach?, wordSaidByUser: null), Conversation(role: user, content: I've never surfed before, but I'd love to try it. Do you know of any good surf schools in Kuta?, wordSaidByUser: I've never heard suffered Pizza but I love to try it do you know any good sort of schools in Qatar), Conversation(role: assistant, content: There are several good surf schools in Kuta. I can recommend Rip Curl School of Surf and Odyssey Surf School. They both have great instructors and equipment., wordSaidByUser: null), Conversation(role: user, content: Thanks for the recommendations. How long do you think I should stay in Bali to get a good feel for the island?, wordSaidByUser: thanks for the recommendation how long do you think I should stay in Bali to get a good feel for the Iceland), Conversation(role: assistant, content: I think at least a week would be good to explore the island and its culture. You could also consider visiting some of the temples, like Tanah Lot or Uluwatu, and experience the local cuisine., wordSaidByUser: null), Conversation(role: user, content: A week sounds like a good amount of time. Do you think I should book my accommodations in advance or wait until I get there?, wordSaidByUser: a week sounds like a good amount of time do you think I should put my accommodation in advance or wait until I get there), Conversation(role: assistant, content: I would recommend booking your accommodations in advance, especially during peak season. You can find some great deals on hotels and villas online. [CONVERSATION COMPLETED], wordSaidByUser: null)]";
+    List<GroqMessage> feedbackMessages = [
+      GroqMessage(
+          "system", SystemPromptTemplate.spontanConversationFeedback(conversationMessageJson.toString())),
+      GroqMessage("user", "give feedback for our conversation")
+    ];
+    await Get.find<ApiProvider>()
+        .getModelResponse(feedbackMessages)
+        .then((groqResponse) {
+      var result = groqResponse.choices.first.message.content;
+      feedback.value = result;
+    });
   }
 }
