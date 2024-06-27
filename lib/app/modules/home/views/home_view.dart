@@ -27,6 +27,39 @@ class HomeView extends GetView<HomeController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              kIsWeb &&
+                      (defaultTargetPlatform != TargetPlatform.android ||
+                          defaultTargetPlatform != TargetPlatform.iOS)
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(top: 16.0, left: 16),
+                          child: Text(
+                            "Browser yang didukung",
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                                color: AppColor.PRIMARY_50,
+                                borderRadius: BorderRadius.circular(16)),
+                            padding: const EdgeInsets.all(12),
+                            child: Column(
+                              children: [
+                                SupportedWebCard(title: "Google Chrome", isSupported: true,),
+                                SupportedWebCard(title: "Mozilla Firefox", isSupported: false,),
+                                SupportedWebCard(title: "Microsoft Edge", isSupported: false,),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  : Container(),
               kIsWeb && defaultTargetPlatform == TargetPlatform.android
                   ? GestureDetector(
                       onTap: () {
@@ -210,7 +243,7 @@ class HomeView extends GetView<HomeController> {
                   child: Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: AppColor.PRIMARY_50,
                         borderRadius: BorderRadius.circular(16)),
                     padding: const EdgeInsets.all(12),
                     child: Column(
@@ -309,6 +342,9 @@ class PracticeCard extends StatelessWidget {
                         ],
                       ),
                     ),
+                    const SizedBox(
+                      width: 8,
+                    ),
                     const Icon(
                       Icons.arrow_forward_ios_rounded,
                       color: AppColor.NEUTRAL_700,
@@ -343,6 +379,32 @@ class CustomChip extends StatelessWidget {
             fontSize: 14,
             fontWeight: FontWeight.bold),
       ),
+    );
+  }
+}
+
+class SupportedWebCard extends StatelessWidget {
+  final String title;
+  final bool isSupported;
+
+  const SupportedWebCard(
+      {required this.title, required this.isSupported, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        Text(
+          title,
+        ),
+        Spacer(),
+        Icon(
+          isSupported ? Icons.check : Icons.close_rounded,
+          color: isSupported ? Colors.green : Colors.blueGrey,
+        )
+      ],
     );
   }
 }

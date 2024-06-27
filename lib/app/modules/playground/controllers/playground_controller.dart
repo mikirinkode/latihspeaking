@@ -100,9 +100,9 @@ class PlaygroundController extends GetxController {
       _isListening.value = true;
       Get.find<SpeechRecognizer>().continueListening(
           onResultCallback: (String val) {
-        Get.log("recognized value: ${val}");
-        Get.log(
-            "!_text.value.contains(val.recognizedWords): ${!_text.value.contains(val)}");
+        // Get.log("recognized value: ${val}");
+        // Get.log(
+        //     "!_text.value.contains(val.recognizedWords): ${!_text.value.contains(val)}");
 
         _text.value = val;
         // if (kIsWeb) {
