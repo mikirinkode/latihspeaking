@@ -122,7 +122,7 @@ class SpontaneousConversationController extends GetxController {
         final result = resultList.first;
 
         conversationMessages.add(result);
-        _speak(TextUtils.removeAsterisk(result.content));
+        // _speak(TextUtils.removeAsterisk(result.content)); // TODO
         isLoading.value = false;
       }).onError((error, stackTrace) {
         Get.log("onError: $error");
@@ -131,6 +131,14 @@ class SpontaneousConversationController extends GetxController {
     } catch (e) {
       isLoading.value = false;
       Get.log("error: $e");
+    }
+  }
+
+  void startConversation(){
+    if (conversationMessages.length >= 2){
+      var message = conversationMessages[1];
+    _speak(TextUtils.removeAsterisk(message.content));
+    isConversationOnGoing.value = true;
     }
   }
 

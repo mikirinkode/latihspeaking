@@ -133,11 +133,12 @@ class ConversationController extends GetxController {
         if (resultList[1] != null) {
           if (resultList[1].content.isEmpty || resultList[1].content == "...") {
             getConversation();
+          } else {
+            conversationMessages.addAll(resultList);
+            shownMessages.add(resultList.first);
+            shownMessages.add(resultList.elementAt(1));
           }
         }
-        conversationMessages.addAll(resultList);
-        shownMessages.add(resultList.first);
-        shownMessages.add(resultList.elementAt(1));
       } else {
         Get.log("error: ${apiResponse.body}");
       }

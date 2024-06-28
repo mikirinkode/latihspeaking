@@ -1,4 +1,5 @@
 import 'package:avatar_glow/avatar_glow.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -65,15 +66,19 @@ class IntroductionView extends GetView<IntroductionController> {
                     children: [
                       controller.messages.length <= 1
                           ? Padding(
-                            padding: const EdgeInsets.only(top: 16.0, left: 16, right: 16),
-                            child: Text(
+                              padding: const EdgeInsets.only(
+                                  top: 16.0, left: 16, right: 16),
+                              child: Text(
                                 controller.checkFirstGreeting()
-                                    ? "Tekan kembali tombol mic untuk berhenti bicara"
+                                    ? defaultTargetPlatform ==
+                                            TargetPlatform.android
+                                        ? "Setiap kali kamu berhenti selama 3 detik, sistem akan berhenti mendengarkan dan mengganti teks sebelumnya saat kamu mulai berbicara lagi.\n\nSekarang Tekan tombol mic untuk mengirim pesan."
+                                        : "Sekarang tekan kembali tombol mic untuk berhenti bicara"
                                     : "katakan 'Hi' atau 'Hello' untuk memulai",
-                                textAlign: TextAlign.center,
+                                textAlign: TextAlign.start,
                                 style: TextStyle(fontSize: 16),
                               ),
-                          )
+                            )
                           : SizedBox(),
                       Column(
                         children:
