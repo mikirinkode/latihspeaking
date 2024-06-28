@@ -119,9 +119,11 @@ class PlaygroundController extends GetxController {
   stopListening() async {
     Get.log("stopListening() called");
     _isListening.value = false;
-    messages.add(GroqMessage("user", text));
     Get.find<SpeechRecognizer>().stopListening();
-    _getModelResponse();
+    if (text.isNotEmpty){
+      messages.add(GroqMessage("user", text));
+      _getModelResponse();
+    }
   }
 
   Future<void> _getModelResponse() async {

@@ -59,8 +59,7 @@ class IntroductionController extends GetxController {
     selectedVoice("Female");
     _tts = FlutterTts();
     _translator = GoogleTranslator();
-    _isSpeechRecognizerEnabled.value =
-        Get.find<SpeechRecognizer>().isEnabled;
+    _isSpeechRecognizerEnabled.value = Get.find<SpeechRecognizer>().isEnabled;
 
     if (selectedVoice.value == "Male") {
       _tts.setVoice({"name": "Google UK English Male", "locale": "en-GB"});
@@ -142,9 +141,11 @@ class IntroductionController extends GetxController {
   stopListening() async {
     Get.log("stopListening() called");
     _isListening.value = false;
-    messages.add(GroqMessage("user", text));
     Get.find<SpeechRecognizer>().stopListening();
-    _getModelResponse();
+    if (text.isNotEmpty) {
+      messages.add(GroqMessage("user", text));
+      _getModelResponse();
+    }
   }
 
   void _speak(String input) {

@@ -167,9 +167,17 @@ class ConversationController extends GetxController {
   }
 
   startListening() async {
-    _nextMessage();
-    _text.value = "";
-    continueListening();
+    if (currentFocusedMessage.value <= 0){
+      _nextMessage();
+      continueListening();
+    } else if (text.isNotEmpty){
+      _text.value = "";
+      _nextMessage();
+      continueListening();
+    } else {
+      continueListening();
+    }
+    Get.log("current focused: ${currentFocusedMessage.value}");
   }
 
   continueListening() async {
@@ -195,32 +203,35 @@ class ConversationController extends GetxController {
     Get.log("stopListening() called");
     _isListening.value = false;
     Get.find<SpeechRecognizer>().stopListening();
-    // update the previous message
-    ConversationMessage currentMessage =
-        shownMessages.elementAt(currentFocusedMessage.value);
 
-    ConversationMessage updatedMessage = ConversationMessage(
-        role: currentMessage.role,
-        content: currentMessage.content,
-        translation: currentMessage.translation,
-        wordSaidByUser: text);
-    shownMessages[currentFocusedMessage.value] = updatedMessage;
+    if(text.isNotEmpty){
+      // update the previous message
+      ConversationMessage currentMessage =
+          shownMessages.elementAt(currentFocusedMessage.value);
 
-    var conversationMessageJson = shownMessages.map((e) => e.toJson()).toList();
-    Get.log("conversation json: ${conversationMessageJson}");
-    // show next message
-    shownMessages
-        .add(conversationMessages.elementAt(currentFocusedMessage.value + 1));
+      ConversationMessage updatedMessage = ConversationMessage(
+          role: currentMessage.role,
+          content: currentMessage.content,
+          translation: currentMessage.translation,
+          wordSaidByUser: text);
+      shownMessages[currentFocusedMessage.value] = updatedMessage;
 
-    if (currentFocusedMessage.value + 2 < conversationMessages.length - 1) {
-      // show the user too
+      var conversationMessageJson = shownMessages.map((e) => e.toJson()).toList();
+      Get.log("conversation json: ${conversationMessageJson}");
+      // show next message
       shownMessages
-          .add(conversationMessages.elementAt(currentFocusedMessage.value + 2));
-    }
+          .add(conversationMessages.elementAt(currentFocusedMessage.value + 1));
 
-    Get.log("onStatus: next messages displayed");
-    _nextMessage();
-    _continueConversation();
+      if (currentFocusedMessage.value + 2 < conversationMessages.length - 1) {
+        // show the user too
+        shownMessages
+            .add(conversationMessages.elementAt(currentFocusedMessage.value + 2));
+      }
+
+      Get.log("onStatus: next messages displayed");
+      _nextMessage();
+      _continueConversation();
+    }
   }
 
   void _continueConversation() {

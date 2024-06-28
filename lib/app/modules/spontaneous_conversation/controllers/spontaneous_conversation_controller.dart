@@ -161,11 +161,13 @@ class SpontaneousConversationController extends GetxController {
   stopListening() async {
     Get.log("stopListening() called");
     _isListening.value = false;
-    conversationMessages.add(GroqMessage("user", text));
-    conversationMessages[0] = GroqMessage("system",
-        SystemPromptTemplate.getSpontanConversationPractice(theme.value, conversationMessages.length, _conversationLimit));
     Get.find<SpeechRecognizer>().stopListening();
-    _getModelResponse();
+    if (text.isNotEmpty){
+      conversationMessages.add(GroqMessage("user", text));
+      conversationMessages[0] = GroqMessage("system",
+          SystemPromptTemplate.getSpontanConversationPractice(theme.value, conversationMessages.length, _conversationLimit));
+      _getModelResponse();
+    }
   }
 
   _getModelResponse() async {
