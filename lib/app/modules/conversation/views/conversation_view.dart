@@ -14,211 +14,259 @@ class ConversationView extends GetView<ConversationController> {
   @override
   Widget build(BuildContext context) {
     return Obx(
-      () => Scaffold(
-        appBar: AppBar(
-          title: Text(controller.theme.value),
-          centerTitle: true,
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: (controller.shownMessages.isEmpty)
-            ? Container()
-            : controller.isFinished.value
-                ? Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(color: Colors.white),
-                    padding: const EdgeInsets.all(16),
-                    child: const Text(
-                      "🎉 Yeay! kamu telah menyelesaikan percakapan ini!",
-                      textAlign: TextAlign.center,
-                    ),
-                  )
-                : !(controller.isConversationOnGoing.value)
-                    ? Container(
-                        width: double.infinity,
-                        padding:
-                            const EdgeInsets.only(top: 24, right: 24, left: 24),
-                        child: PrimaryButton(
-                            text: "Mulai Sekarang",
-                            onPressed: () {
-                              controller.startConversation();
-                            }),
-                      )
-                    : AvatarGlow(
-                        animate: controller.isListening,
-                        glowColor: AppColor.PRIMARY_500,
-                        // endRadius: 75.0,
-                        duration: const Duration(milliseconds: 2000),
-                        // repeatPauseDuration: const Duration(milliseconds: 100),
-                        repeat: true,
-                        child: FloatingActionButton(
-                          onPressed: () {
-                            if (controller.isSpeakingEnabled.value) {
-                              if (controller.isListening) {
-                                controller.stopListening();
-                              } else {
-                                controller.startListening();
-                              }
-                            }
-                          },
-                          backgroundColor: controller.isSpeakingEnabled.value
-                              ? AppColor.PRIMARY_500
-                              : AppColor.NEUTRAL_200,
-                          foregroundColor: controller.isSpeakingEnabled.value
-                              ? Colors.white
-                              : AppColor.NEUTRAL_400,
-                          child: Icon(
-                              controller.isListening ? Icons.stop : Icons.mic),
-                        )),
-        body: Obx(() => controller.isLoading.value
-            ? LoadingIndicator()
-            : controller.shownMessages.isEmpty
-                ? Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16)),
-                      padding: const EdgeInsets.all(12),
+      () => (controller.isShowFeedback.value)
+          ? Scaffold(
+              appBar: AppBar(
+                title: Text("Feedback"),
+                centerTitle: true,
+              ),
+              body: (controller.isGeneratingFeedback.value)
+                  ? LoadingIndicator()
+                  : SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
                         child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text("Gagal mengambil data", style: TextStyle(fontSize: 24),),
-                            const SizedBox(height: 4,),
-                            Text("Saat ini server sedang ramai, \nharap coba beberapa saat lagi.", textAlign: TextAlign.center, style: TextStyle(fontSize: 16),),
+                            ConversationFeedbackCard(
+                                feedback: controller.feedback.value,
+                                translatedFeedback:
+                                    controller.translatedFeedback.value,
+                                translateFeedback: () {
+                                  controller.translatedFeedback();
+                                }),
                             const SizedBox(height: 16,),
-                            PrimaryButton(
-                              text: "Coba Lagi",
-                              onPressed: () {
-                                controller.getConversation();
-                              },
+                            SizedBox(
+                              width: double.infinity,
+                              child: PrimaryButton(
+                                  text: "Selesai",
+                                  onPressed: () {
+                                    Get.back();
+                                  }),
                             ),
+                            const SizedBox(height: 32,),
                           ],
                         ),
                       ),
-                  ),
-                )
-                : SingleChildScrollView(
-                    reverse: true,
-                    child: Container(
-                      padding: const EdgeInsets.fromLTRB(16.0, 0, 16, 150.0),
-                      child: Column(
-                        children: [
-                          Column(
-                            children: controller.shownMessages
-                                .asMap()
-                                .entries
-                                .map((e) {
-                              return ThemedChatWidget(
-                                  message: e.value.content,
-                                  role: e.value.role,
-                                  translatedMessage: e.value.translation ?? "",
-                                  isFocusedMessage:
-                                      controller.currentFocusedMessage.value ==
-                                          e.key,
-                                  currentSaidText: controller.text,
-                                  textSaidByUser: e.value.wordSaidByUser ?? "",
-                                  translate: () {
-                                    controller.getTranslation(e.value, e.key);
-                                  });
-                            }).toList(),
-                          ),
-                          // ListView.builder(
-                          //   itemCount: controller.conversationMessages.length,
-                          //   itemBuilder: (context, index) {
-                          //     var e = controller.conversationMessages[index];
-                          //     return ThemedChatWidget(
-                          //         message: e.content,
-                          //         role: e.role,
-                          //         translatedMessage: e.translation ?? "",
-                          //         translate: () {});
-                          //   },
-                          // ),
-                          controller.feedback.isEmpty
-                              ? Container()
-                              : ConversationFeedbackCard(
-                                  feedback: controller.feedback.value,
-                                  translatedFeedback:
-                                      controller.translatedFeedback.value,
-                                  translateFeedback: () {
-                                    controller.translatedFeedback();
-                                  })
-                          // TODO [WIP] : CONTINUE LATER
-                          // controller.conversationFeedback.value == null
-                          //     ? Container()
-                          //     : Column(
-                          //       children: [
-                          //         const SizedBox(height: 16,),
-                          //         Text("Here is feedback for our conversation: "),
-                          //         Padding(
-                          //             padding: const EdgeInsets.only(top: 16.0),
-                          //             child: Container(
-                          //                 padding: EdgeInsets.all(16),
-                          //                 decoration: BoxDecoration(
-                          //                   color: Colors.white,
-                          //                   borderRadius: BorderRadius.circular(16),
-                          //                 ),
-                          //                 child: Column(
-                          //                   children: [
-                          //                     Container(
-                          //                       padding: EdgeInsets.all(16),
-                          //                       decoration: BoxDecoration(
-                          //                           color: AppColor.PRIMARY_50,
-                          //                           borderRadius:
-                          //                               BorderRadius.circular(16),
-                          //                           border: Border.all(
-                          //                               width: 1,
-                          //                               color: AppColor.PRIMARY_50)),
-                          //                       child: Column(
-                          //                         children: [
-                          //                           Text(
-                          //                             controller.conversationFeedback
-                          //                                 .value!.overall!.score
-                          //                                 .toString(),
-                          //                             style: TextStyle(
-                          //                                 color: AppColor.PRIMARY,
-                          //                                 fontSize: 24,
-                          //                                 fontWeight: FontWeight.w900),
-                          //                           ),
-                          //                           const SizedBox(
-                          //                             height: 8,
-                          //                           ),
-                          //                           Text("Skor Keseluruhan")
-                          //                         ],
-                          //                       ),
-                          //                     ),
-                          //                     const SizedBox(
-                          //                       height: 16,
-                          //                     ),
-                          //                     const SizedBox(
-                          //                         width: double.infinity,
-                          //                         child: Text(
-                          //                           "Feedback",
-                          //                           style: TextStyle(
-                          //                               fontSize: 18,
-                          //                               fontWeight: FontWeight.bold),
-                          //                         )),
-                          //                     const SizedBox(
-                          //                       height: 8,
-                          //                     ),
-                          //                     controller
-                          //                             .translatedFeedback.value.isEmpty
-                          //                         ? SizedBox()
-                          //                         : MarkdownBody(
-                          //                             data: controller
-                          //                                 .translatedFeedback.value)
-                          //                   ],
-                          //                 )),
-                          //           ),
-                          //       ],
-                          //     )
-                        ],
-                      ),
                     ),
-                  )),
-      ),
+            )
+          : Scaffold(
+              appBar: AppBar(
+                title: Text(controller.theme.value),
+                centerTitle: true,
+              ),
+              floatingActionButtonLocation:
+                  FloatingActionButtonLocation.centerFloat,
+              floatingActionButton: (controller.shownMessages.isEmpty)
+                  ? Container()
+                  : controller.isFinished.value
+                      ? Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(color: Colors.white),
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                "🎉 Yeay! kamu telah menyelesaikan percakapan ini!",
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(
+                                height: 16,
+                              ),
+                              SecondaryButton(
+                                text: "Lihat Feedback",
+                                onPressed: () {
+                                  controller.showFeedback();
+                                },
+                              ),
+                            ],
+                          ),
+                        )
+                      : !(controller.isConversationOnGoing.value)
+                          ? Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.only(
+                                  top: 24, right: 24, left: 24),
+                              child: PrimaryButton(
+                                  text: "Mulai Sekarang",
+                                  onPressed: () {
+                                    controller.startConversation();
+                                  }),
+                            )
+                          : AvatarGlow(
+                              animate: controller.isListening,
+                              glowColor: AppColor.PRIMARY_500,
+                              // endRadius: 75.0,
+                              duration: const Duration(milliseconds: 2000),
+                              // repeatPauseDuration: const Duration(milliseconds: 100),
+                              repeat: true,
+                              child: FloatingActionButton(
+                                onPressed: () {
+                                  if (controller.isSpeakingEnabled.value) {
+                                    if (controller.isListening) {
+                                      controller.stopListening();
+                                    } else {
+                                      controller.startListening();
+                                    }
+                                  }
+                                },
+                                backgroundColor:
+                                    controller.isSpeakingEnabled.value
+                                        ? AppColor.PRIMARY_500
+                                        : AppColor.NEUTRAL_200,
+                                foregroundColor:
+                                    controller.isSpeakingEnabled.value
+                                        ? Colors.white
+                                        : AppColor.NEUTRAL_400,
+                                child: Icon(controller.isListening
+                                    ? Icons.stop
+                                    : Icons.mic),
+                              )),
+              body: Obx(() => controller.isLoading.value
+                  ? LoadingIndicator()
+                  : controller.shownMessages.isEmpty
+                      ? Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(16)),
+                              padding: const EdgeInsets.all(12),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Gagal mengambil data",
+                                    style: TextStyle(fontSize: 24),
+                                  ),
+                                  const SizedBox(
+                                    height: 4,
+                                  ),
+                                  Text(
+                                    "Saat ini server sedang ramai, \nharap coba beberapa saat lagi.",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                  const SizedBox(
+                                    height: 16,
+                                  ),
+                                  PrimaryButton(
+                                    text: "Coba Lagi",
+                                    onPressed: () {
+                                      controller.getConversation();
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        )
+                      : SingleChildScrollView(
+                          reverse: true,
+                          child: Container(
+                            padding:
+                                const EdgeInsets.fromLTRB(16.0, 0, 16, 150.0),
+                            child: Column(
+                              children: [
+                                Column(
+                                  children: controller.shownMessages
+                                      .asMap()
+                                      .entries
+                                      .map((e) {
+                                    return ThemedChatWidget(
+                                        message: e.value.content,
+                                        role: e.value.role,
+                                        translatedMessage:
+                                            e.value.translation ?? "",
+                                        isFocusedMessage: controller
+                                                .currentFocusedMessage.value ==
+                                            e.key,
+                                        currentSaidText: controller.text,
+                                        textSaidByUser:
+                                            e.value.wordSaidByUser ?? "",
+                                        translate: () {
+                                          controller.getTranslation(
+                                              e.value, e.key);
+                                        });
+                                  }).toList(),
+                                ),
+                                // TODO [WIP] : CONTINUE LATER
+                                // controller.conversationFeedback.value == null
+                                //     ? Container()
+                                //     : Column(
+                                //       children: [
+                                //         const SizedBox(height: 16,),
+                                //         Text("Here is feedback for our conversation: "),
+                                //         Padding(
+                                //             padding: const EdgeInsets.only(top: 16.0),
+                                //             child: Container(
+                                //                 padding: EdgeInsets.all(16),
+                                //                 decoration: BoxDecoration(
+                                //                   color: Colors.white,
+                                //                   borderRadius: BorderRadius.circular(16),
+                                //                 ),
+                                //                 child: Column(
+                                //                   children: [
+                                //                     Container(
+                                //                       padding: EdgeInsets.all(16),
+                                //                       decoration: BoxDecoration(
+                                //                           color: AppColor.PRIMARY_50,
+                                //                           borderRadius:
+                                //                               BorderRadius.circular(16),
+                                //                           border: Border.all(
+                                //                               width: 1,
+                                //                               color: AppColor.PRIMARY_50)),
+                                //                       child: Column(
+                                //                         children: [
+                                //                           Text(
+                                //                             controller.conversationFeedback
+                                //                                 .value!.overall!.score
+                                //                                 .toString(),
+                                //                             style: TextStyle(
+                                //                                 color: AppColor.PRIMARY,
+                                //                                 fontSize: 24,
+                                //                                 fontWeight: FontWeight.w900),
+                                //                           ),
+                                //                           const SizedBox(
+                                //                             height: 8,
+                                //                           ),
+                                //                           Text("Skor Keseluruhan")
+                                //                         ],
+                                //                       ),
+                                //                     ),
+                                //                     const SizedBox(
+                                //                       height: 16,
+                                //                     ),
+                                //                     const SizedBox(
+                                //                         width: double.infinity,
+                                //                         child: Text(
+                                //                           "Feedback",
+                                //                           style: TextStyle(
+                                //                               fontSize: 18,
+                                //                               fontWeight: FontWeight.bold),
+                                //                         )),
+                                //                     const SizedBox(
+                                //                       height: 8,
+                                //                     ),
+                                //                     controller
+                                //                             .translatedFeedback.value.isEmpty
+                                //                         ? SizedBox()
+                                //                         : MarkdownBody(
+                                //                             data: controller
+                                //                                 .translatedFeedback.value)
+                                //                   ],
+                                //                 )),
+                                //           ),
+                                //       ],
+                                //     )
+                              ],
+                            ),
+                          ),
+                        )),
+            ),
     );
   }
 }

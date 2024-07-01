@@ -45,6 +45,8 @@ class ConversationController extends GetxController {
   final conversationFeedback = Rx<ConversationFeedback?>(null);
   final feedback = "".obs;
   final translatedFeedback = "".obs;
+  final isShowFeedback = false.obs;
+  final isGeneratingFeedback = false.obs;
 
   /// Object
   late FlutterTts _tts;
@@ -263,7 +265,7 @@ class ConversationController extends GetxController {
         // Get.log("conversation json: ${conversationMessageJson}");
         isConversationOnGoing.value = false;
         isFinished.value = true;
-        await _getFeedback();
+        // await _getFeedback();
       }
     } else {
       Get.log("ELSE CurrentMessageIndex has reach the last");
@@ -288,16 +290,20 @@ class ConversationController extends GetxController {
     }
   }
 
+  void showFeedback(){
+    _tts.stop();
+    isShowFeedback.value = true;
+    _getFeedback();
+  }
+
   Future<void> _getFeedback() async {
+    isGeneratingFeedback.value = true;
     // var conversationMessageJson = shownMessages.map((e) => e.toJson()).toList();
     List<String> conversationMessageJson =
         shownMessages.map((e) => e.toString()).toList();
     Get.log("conversation json: ${conversationMessageJson}");
     // var x =
     //     "[Conversation(role: assistant, content: Have you ever considered visiting Bali, Indonesia? It's a beautiful island with stunning beaches and temples., wordSaidByUser: null), Conversation(role: user, content: Yes, I've always wanted to go there. I've heard the beaches are amazing., wordSaidByUser: yes I have always wanted to go there I have heard that the beaches are amazing), Conversation(role: assistant, content: They definitely are! Kuta, Seminyak, and Nusa Dua are some of the most popular beaches. Which one would you like to visit first?, wordSaidByUser: null), Conversation(role: user, content: I think I'd like to visit Kuta. I've heard it's a great place for surfers., wordSaidByUser: I think I like to visit Kota I have her it is a great place for soft first), Conversation(role: assistant, content: That's right! Kuta is known for its great surfing spots. Are you planning to try surfing while you're there or just relax on the beach?, wordSaidByUser: null), Conversation(role: user, content: I've never surfed before, but I'd love to try it. Do you know of any good surf schools in Kuta?, wordSaidByUser: I've never heard suffered Pizza but I love to try it do you know any good sort of schools in Qatar), Conversation(role: assistant, content: There are several good surf schools in Kuta. I can recommend Rip Curl School of Surf and Odyssey Surf School. They both have great instructors and equipment., wordSaidByUser: null), Conversation(role: user, content: Thanks for the recommendations. How long do you think I should stay in Bali to get a good feel for the island?, wordSaidByUser: thanks for the recommendation how long do you think I should stay in Bali to get a good feel for the Iceland), Conversation(role: assistant, content: I think at least a week would be good to explore the island and its culture. You could also consider visiting some of the temples, like Tanah Lot or Uluwatu, and experience the local cuisine., wordSaidByUser: null), Conversation(role: user, content: A week sounds like a good amount of time. Do you think I should book my accommodations in advance or wait until I get there?, wordSaidByUser: a week sounds like a good amount of time do you think I should put my accommodation in advance or wait until I get there), Conversation(role: assistant, content: I would recommend booking your accommodations in advance, especially during peak season. You can find some great deals on hotels and villas online. [CONVERSATION COMPLETED], wordSaidByUser: null)]";
-    // var encoded = json.encode(conversationMessageJson);
-    // var c = "[{\"role\":\"assistant\",\"content\":\"Hi! Have you ever thought of visiting Bali, Indonesia? It's such a beautiful island with stunning beaches and temples.\",\"wordSaidByUser\":null},{\"role\":\"user\",\"content\":\"Yes, I've always wanted to visit Bali. I've heard it's a great place to relax and unwind.\",\"wordSaidByUser\":\"yes I have always wanted to visit Bali I have heard it is a great place to relax and unwind\"},{\"role\":\"assistant\",\"content\":\"Absolutely! Bali is perfect for relaxation. What kind of activities are you interested in doing while you're there? Would you like to try surfing or yoga?\",\"wordSaidByUser\":null},{\"role\":\"user\",\"content\":\"I'm not really into surfing, but I'd love to try yoga on the beach. Are there any good yoga studios in Bali?\",\"wordSaidByUser\":\"I'm not really into surfing but I'd love to try yoga on the beach after any good yoga studios in Bali\"},{\"role\":\"assistant\",\"content\":\"There are plenty of great yoga studios in Bali. You should check out Yoga House in Ubud or The Yoga Room in Canggu. They both offer amazing classes with breathtaking views.\",\"wordSaidByUser\":null},{\"role\":\"user\",\"content\":\"That sounds amazing! I'll definitely check them out. What about accommodations? Should I stay in a hotel or a villa?\",\"wordSaidByUser\":\"that sounds amazing I will definitely check them out what about accommodation so I stay at a hotel or a villa\"},{\"role\":\"assistant\",\"content\":\"It really depends on your budget and preferences. If you're looking for luxury, you could stay at a 5-star hotel like the Four Seasons. But if you want something more traditional, you could rent a villa through Airbnb.\",\"wordSaidByUser\":null},{\"role\":\"user\",\"content\":\"I think I'll opt for a villa. Do you know any good areas to stay in?\",\"wordSaidByUser\":\"I think I will up for Villa do you know any good areas to stay in\"},{\"role\":\"assistant\",\"content\":\"Seminyak is a great area to stay in. It's close to the beach and has plenty of restaurants and shops. Or you could stay in Ubud, which is more inland and surrounded by rice fields.\",\"wordSaidByUser\":null},{\"role\":\"user\",\"content\":\"I think I'll stay in Seminyak. How long do you think I should stay in Bali for?\",\"wordSaidByUser\":\"I think I will stay in semia how long do you think I should stay in for money\"},{\"role\":\"assistant\",\"content\":\"I'd recommend staying for at least a week to really get a feel for the island. But if you have more time, 10-14 days would be even better. You could explore the whole island and take your time to relax. [CONVERSATION COMPLETED]\",\"wordSaidByUser\":null}]";
-// var c = "[]";
     List<GroqMessage> feedbackMessages = [
       GroqMessage("system",
           SystemPromptTemplate.directedConversationFeedback(conversationMessageJson.toString())),
@@ -309,6 +315,7 @@ class ConversationController extends GetxController {
       var result = groqResponse.choices.first.message.content;
       feedback.value = result;
 
+      isGeneratingFeedback.value = false;
       // var decoded = jsonDecode(groqResponse.choices.first.message.content);
       // ConversationFeedback result = ConversationFeedback.fromJson(decoded);
       // Get.log("overall score: ${result.overall?.score}");

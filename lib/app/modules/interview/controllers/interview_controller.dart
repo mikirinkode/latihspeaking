@@ -39,8 +39,10 @@ class InterviewController extends GetxController {
   final selectedVoice = "".obs;
   final feedback = "".obs;
   final translatedFeedback = "".obs;
+  final isShowFeedback = false.obs;
+  final isGeneratingFeedback = false.obs;
 
-  final pageTitle = "Playground".obs;
+  final pageTitle = "Interview".obs;
 
   /// Object
   late FlutterTts _tts;
@@ -106,9 +108,9 @@ class InterviewController extends GetxController {
       _isListening.value = true;
       Get.find<SpeechRecognizer>().continueListening(
           onResultCallback: (String val) {
-        Get.log("recognized value: ${val}");
-        Get.log(
-            "!_text.value.contains(val.recognizedWords): ${!_text.value.contains(val)}");
+        // Get.log("recognized value: ${val}");
+        // Get.log(
+        //     "!_text.value.contains(val.recognizedWords): ${!_text.value.contains(val)}");
         _text.value = val;
         // if (kIsWeb) {
         //   _text.value = val;
@@ -143,7 +145,7 @@ class InterviewController extends GetxController {
         _speak(TextUtils.removeAsterisk(result));
         if (result.contains("[INTERVIEW ENDED]")) {
           isFinished.value = true;
-          _getFeedback();
+          // _getFeedback();
         }
       });
     } catch (e) {
@@ -183,8 +185,14 @@ class InterviewController extends GetxController {
       Get.log("onGetTranslation info: there already translation");
     }
   }
+  void showFeedback(){
+    _tts.stop();
+    isShowFeedback.value = true;
+    _getFeedback();
+  }
 
   Future<void> _getFeedback() async {
+    isGeneratingFeedback.value = true;
     List<String> conversationMessageJson =
         messages.map((e) => e.toString()).toList();
     Get.log("conversation json: ${conversationMessageJson}");
@@ -202,6 +210,7 @@ class InterviewController extends GetxController {
         .then((groqResponse) {
       var result = groqResponse.choices.first.message.content;
       feedback.value = result;
+      isGeneratingFeedback.value = false;
     });
   }
 

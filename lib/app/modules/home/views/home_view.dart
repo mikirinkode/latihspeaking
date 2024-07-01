@@ -396,14 +396,15 @@ class SupportedWebCard extends StatelessWidget {
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
+        Icon(
+          isSupported ? Icons.check_circle : Icons.close_rounded,
+          color: isSupported ? Colors.green : Colors.black,
+        ),
+        const SizedBox(width: 8,),
         Text(
           title,
         ),
         Spacer(),
-        Icon(
-          isSupported ? Icons.check : Icons.close_rounded,
-          color: isSupported ? Colors.green : Colors.blueGrey,
-        )
       ],
     );
   }

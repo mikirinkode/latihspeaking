@@ -7,6 +7,8 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:speaking/app/global_widgets/in_chat_loading.dart';
 
 import '../../../core/theme/app_color.dart';
+import '../../../global_widgets/button_widget.dart';
+import '../../../global_widgets/loading_indicator.dart';
 import '../../playground/views/playground_view.dart';
 import '../../spontaneous_conversation/views/spontaneous_conversation_view.dart';
 import '../controllers/interview_controller.dart';
@@ -15,7 +17,42 @@ class InterviewView extends GetView<InterviewController> {
   @override
   Widget build(BuildContext context) {
     return Obx(
-      () => Scaffold(
+      () => (controller.isShowFeedback.value)
+          ? Scaffold(
+        appBar: AppBar(
+          title: Text("Feedback"),
+          centerTitle: true,
+        ),
+        body: (controller.isGeneratingFeedback.value)
+            ? LoadingIndicator()
+            : SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                ConversationFeedbackCard(
+                    feedback: controller.feedback.value,
+                    translatedFeedback:
+                    controller.translatedFeedback.value,
+                    translateFeedback: () {
+                      controller.translatedFeedback();
+                    }),
+                const SizedBox(height: 16,),
+                SizedBox(
+                  width: double.infinity,
+                  child: PrimaryButton(
+                      text: "Selesai",
+                      onPressed: () {
+                        Get.back();
+                      }),
+                ),
+                const SizedBox(height: 32,),
+              ],
+            ),
+          ),
+        ),
+      )
+          : Scaffold(
         appBar: AppBar(
           centerTitle: true,
           title: Text("Ruang Interview"),
@@ -26,9 +63,23 @@ class InterviewView extends GetView<InterviewController> {
                 width: double.infinity,
                 decoration: BoxDecoration(color: Colors.white),
                 padding: const EdgeInsets.all(16),
-                child: const Text(
-                  "🎉 Yeay! kamu telah menyelesaikan latihan interview!",
-                  textAlign: TextAlign.center,
+                child:  Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "🎉 Yeay! kamu telah menyelesaikan latihan interview!",
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    SecondaryButton(
+                      text: "Lihat Feedback",
+                      onPressed: () {
+                        controller.showFeedback();
+                      },
+                    ),
+                  ],
                 ),
               )
             : AvatarGlow(
